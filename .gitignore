@@ -1,0 +1,38 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+./**/tsconfig.tsbuildinfo
+tsconfig.tsbuildinfo
+node_modules
+generated
+dist
+
+### PROJECT
+
+packages/**/src/**/contracts
+###
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.rdb
+
+##pnpm only
+package-lock.json
+yarn.lock
+
+.env
+.eslintcache
