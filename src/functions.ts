@@ -90,6 +90,8 @@ export async function olmPricing(
     return {
         strikePriceUSD: strikePriceUSD,
         impliedValue: impliedValue,
+        stakedTokenBalance: decimalAdjustedTotalBalance,
+        rewardRate: decimalAdjustedRewardRate,
         epochRoi: epochRoi,
         epochDuration: epochDuration,
         epochsPerYear: epochsPerYear,

@@ -23,7 +23,7 @@ export function GetOLMPricing() {
     return (
         <div>
 
-            <div>
+            <div className="flex flex-col m-2">
                 <label>OLM Address</label>
                 <input
                     onChange={(e) => setAddress(e.target.value)}
@@ -55,18 +55,18 @@ export function GetOLMPricing() {
             </div>
             <br />
             {result &&
-                <div>
+                <div className="m-2">
                     Strike Price: ${result.strikePriceUSD}
                     <br/>
                     Option Token Implied Value: ${result.impliedValue}
                     <br/>
-                    Current Rewards per Token: {result.currentRewardsPerToken}
+                    Staked Token Balance: {result.stakedTokenBalance}
                     <br/>
-                    Reward Value: ${result.rewardValue}
+                    Reward Rate (oTokens per day): {result.rewardRate}
+                    <br/>
+                    Epoch Duration (days): {result.epochDuration / 86400}
                     <br/>
                     Epoch ROI: {result.epochRoi}%
-                    <br/>
-                    Epoch Duration: {result.epochDuration}
                     <br/>
                     Epochs per Year: {result.epochsPerYear}
                     <br/>
