@@ -90,9 +90,113 @@ export async function olmPricing(
     return {
         strikePriceUSD: strikePriceUSD,
         impliedValue: impliedValue,
+        stakedTokenBalance: decimalAdjustedTotalBalance,
+        rewardRate: decimalAdjustedRewardRate,
         epochRoi: epochRoi,
         epochDuration: epochDuration,
         epochsPerYear: epochsPerYear,
         apr: apr
     };
+}
+
+export async function olmTokenList(
+    olmAddress: `0x${string}`,
+    publicClient: PublicClient
+) {
+    const olmContract = getContract({
+        address: olmAddress,
+        abi: olmAbi,
+        publicClient
+    });
+
+    const epoch = await olmContract.read.epoch();
+    console.log(epoch);
+
+    // Iterate from epoch 1 to current epoch and collect list of oTokens
+    let oTokens = [];
+    for (let i = 1; i <= epoch; i++) {
+        const optionToken = await olmContract.read.epochOptionTokens([i]);
+        oTokens.push(optionToken);
+    }
+
+    return oTokens;
+}
+
+export async function oTokenData(
+    oTokenAddress: `0x${string}`,
+    publicClient: PublicClient
+) {
+    const oTokenContract = getContract({
+        address: oTokenAddress,
+        abi: fixedStrikeOptionTokenAbi,
+        publicClient
+    });
+
+    const [
+        decimals,
+        payoutToken,
+        quoteToken,
+        eligibleTime,
+        expiryTime,
+        ,
+        call,
+        strikePrice
+    ] = await oTokenContract.read.getOptionParameters();
+
+    const [
+        name,
+        symbol
+    ] = await Promise.all([
+        oTokenContract.read.name(),
+        oTokenContract.read.symbol()
+    ]);
+
+    const payoutTokenContract = getContract({
+        address: payoutToken,
+        abi: IERC20Abi,
+        publicClient
+    });
+
+    const quoteTokenContract = getContract({
+        address: quoteToken,
+        abi: IERC20Abi,
+        publicClient
+    });
+
+    const [
+        payoutTokenName,
+        payoutTokenSymbol,
+        payoutTokenDecimals,
+        quoteTokenName,
+        quoteTokenSymbol,
+        quoteTokenDecimals
+    ] = await Promise.all([
+        payoutTokenContract.read.name(),
+        payoutTokenContract.read.symbol(),
+        payoutTokenContract.read.decimals(),
+        quoteTokenContract.read.name(),
+        quoteTokenContract.read.symbol(),
+        quoteTokenContract.read.decimals()
+    ]);
+
+    const decimalAdjustedStrike = formatUnits(
+        strikePrice, quoteTokenDecimals
+    );
+
+    return {
+        name,
+        symbol,
+        decimals,
+        payoutTokenName,
+        payoutTokenSymbol,
+        payoutTokenDecimals,
+        quoteTokenName,
+        quoteTokenSymbol,
+        quoteTokenDecimals,
+        strikePrice: decimalAdjustedStrike,
+        eligibleTime,
+        expiryTime,
+        call
+    };
+
 }
