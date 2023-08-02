@@ -2,13 +2,22 @@ import {formatUnits, getContract, PublicClient} from "viem";
 import {fixedStrikeOptionTokenAbi, olmAbi} from "./abis";
 import {IERC20Abi} from "./abis/IERC20";
 
+export type OLMPricing = {
+    strikePriceUSD: number,
+    impliedValue: number,
+    epochRoi: number,
+    epochDuration: number,
+    epochsPerYear: number,
+    apr: number
+}
+
 export async function olmPricing(
     olmAddress: `0x${string}`,
     payoutPriceUSD: number,
     quotePriceUSD: number,
     stakedTokenPriceUSD: number,
     publicClient: PublicClient
-) {
+): Promise<OLMPricing> {
     const olmContract = getContract({
         address: olmAddress,
         abi: olmAbi,

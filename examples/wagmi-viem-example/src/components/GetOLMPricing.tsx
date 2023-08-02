@@ -1,5 +1,5 @@
 import {useState} from 'react'
-import {olmPricing} from "../../../../src/functions";
+import {OLMPricing, olmPricing} from "../../../../src/functions";
 import {PublicClient} from "viem";
 
 type GetOLMPricingProps = {
@@ -12,7 +12,7 @@ export function GetOLMPricing(props: GetOLMPricingProps) {
     const [quotePrice, setQuotePrice] = useState<number>(1)
     const [stakedPrice, setStakedPrice] = useState<number>(7.44)
 
-    const [result, setResult] = useState();
+    const [result, setResult] = useState<OLMPricing>();
 
     const getOlmPricing = async () => olmPricing(
         address,
@@ -60,10 +60,6 @@ export function GetOLMPricing(props: GetOLMPricingProps) {
                     Strike Price: ${result.strikePriceUSD}
                     <br/>
                     Option Token Implied Value: ${result.impliedValue}
-                    <br/>
-                    Current Rewards per Token: {result.currentRewardsPerToken}
-                    <br/>
-                    Reward Value: ${result.rewardValue}
                     <br/>
                     Epoch ROI: {result.epochRoi}%
                     <br/>
