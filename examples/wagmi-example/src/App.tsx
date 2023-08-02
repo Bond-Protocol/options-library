@@ -1,6 +1,6 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useAccount } from 'wagmi'
-import { GetMOLMPricing } from './components/GetMOLMPricing'
+import { GetOLMPricing } from './components/GetOLMPricing'
 
 export function App() {
   const { isConnected } = useAccount()
@@ -15,7 +15,7 @@ export function App() {
         <>
           <hr />
           <h2>Read Contract</h2>
-          <GetMOLMPricing />
+          <GetOLMPricing />
         </>
       )}
     </>

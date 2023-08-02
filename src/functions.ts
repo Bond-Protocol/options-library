@@ -1,17 +1,17 @@
 import {formatUnits, getContract, PublicClient} from "viem";
-import {manualStrikeOLMAbi} from "./abis";
+import {fixedStrikeOptionTokenAbi, olmAbi} from "./abis";
 import {IERC20Abi} from "./abis/IERC20";
 
-export async function molmPricing(
-    molmAddress: `0x${string}`,
+export async function olmPricing(
+    olmAddress: `0x${string}`,
     payoutPriceUSD: number,
     quotePriceUSD: number,
     stakedTokenPriceUSD: number,
     publicClient: PublicClient
 ) {
     const olmContract = getContract({
-        address: molmAddress,
-        abi: manualStrikeOLMAbi,
+        address: olmAddress,
+        abi: olmAbi,
         publicClient
     });
 
@@ -20,7 +20,6 @@ export async function molmPricing(
         stakedToken,
         epochDuration,
         epoch,
-        strikePrice,
         rewardRate,
         stakedTokenBalance
     ] = await Promise.all([
@@ -28,7 +27,6 @@ export async function molmPricing(
         olmContract.read.stakedToken(),
         olmContract.read.epochDuration(),
         olmContract.read.epoch(),
-        olmContract.read.strikePrice(),
         olmContract.read.rewardRate(),
         olmContract.read.totalBalance()
     ]);
@@ -49,18 +47,20 @@ export async function molmPricing(
 
     const optionTokenContract = getContract({
         address: optionToken,
-        abi: IERC20Abi,
+        abi: fixedStrikeOptionTokenAbi,
         publicClient
     });
 
     const [
         quoteTokenDecimals,
         stakedTokenDecimals,
-        optionTokenDecimals
+        optionTokenDecimals,
+        strikePrice
     ] = await Promise.all([
         quoteTokenContract.read.decimals(),
         stakedTokenContract.read.decimals(),
-        optionTokenContract.read.decimals()
+        optionTokenContract.read.decimals(),
+        optionTokenContract.read.strike()
     ]);
 
     const decimalAdjustedStrike = formatUnits(

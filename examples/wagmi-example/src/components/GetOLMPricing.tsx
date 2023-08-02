@@ -1,9 +1,9 @@
 import {useState} from 'react'
 import {usePublicClient} from 'wagmi'
-import {molmPricing} from "../../../../src/functions";
+import {olmPricing} from "../../../../src/functions";
 import {goerli} from "wagmi/chains";
 
-export function GetMOLMPricing() {
+export function GetOLMPricing() {
     const publicClient = usePublicClient(goerli);
     const [address, setAddress] = useState<`0x${string}`>("0xb9fa19fc77fab92d90b0a010fbe7b22b045e5dd9")
     const [payoutPrice, setPayoutPrice] = useState<number>(10.58)
@@ -12,7 +12,7 @@ export function GetMOLMPricing() {
 
     const [result, setResult] = useState();
 
-    const getMolmPricing = async () => molmPricing(
+    const getOlmPricing = async () => olmPricing(
         address,
         payoutPrice,
         quotePrice,
@@ -24,7 +24,7 @@ export function GetMOLMPricing() {
         <div>
 
             <div>
-                <label>MOLM Address</label>
+                <label>OLM Address</label>
                 <input
                     onChange={(e) => setAddress(e.target.value)}
                     style={{marginLeft: 4}}
@@ -51,7 +51,7 @@ export function GetMOLMPricing() {
                     style={{marginLeft: 4}}
                     value={stakedPrice}
                 />
-                <button onClick={() => getMolmPricing()}>Fetch</button>
+                <button onClick={() => getOlmPricing()}>Fetch</button>
             </div>
             <br />
             {result &&
