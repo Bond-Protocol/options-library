@@ -15,7 +15,7 @@ export function GetOLMPricing(props: GetOLMPricingProps) {
     const [result, setResult] = useState<OLMPricing>();
 
     const getOlmPricing = async () => olmPricing(
-        address,
+        props.address,
         payoutPrice,
         quotePrice,
         stakedPrice,
@@ -24,13 +24,14 @@ export function GetOLMPricing(props: GetOLMPricingProps) {
 
     return (
         <div>
-            <div>
-                <label>OLM Address</label>
+
+            <div className="flex flex-col m-2">
+                {/* <label>OLM Address</label>
                 <input
                     onChange={(e) => setAddress(e.target.value)}
                     style={{marginLeft: 4}}
                     value={address}
-                />
+                /> */}
                 <label>Payout Price</label>
                 <input
                     onChange={(e) => setPayoutPrice(Number(e.target.value))}
@@ -56,14 +57,18 @@ export function GetOLMPricing(props: GetOLMPricingProps) {
             </div>
             <br />
             {result &&
-                <div>
+                <div className="m-2">
                     Strike Price: ${result.strikePriceUSD}
                     <br/>
                     Option Token Implied Value: ${result.impliedValue}
                     <br/>
-                    Epoch ROI: {result.epochRoi}%
+                    Staked Token Balance: {result.stakedTokenBalance}
                     <br/>
-                    Epoch Duration: {result.epochDuration}
+                    Reward Rate (oTokens per day): {result.rewardRate}
+                    <br/>
+                    Epoch Duration (days): {result.epochDuration / 86400}
+                    <br/>
+                    Epoch ROI: {result.epochRoi}%
                     <br/>
                     Epochs per Year: {result.epochsPerYear}
                     <br/>
