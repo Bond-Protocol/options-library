@@ -24,7 +24,6 @@ export function GetOLMPricing(props: GetOLMPricingProps) {
 
     return (
         <div>
-
             <div>
                 <label>OLM Address</label>
                 <input
