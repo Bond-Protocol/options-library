@@ -167,7 +167,8 @@ export const manualStrikeOLMAbi = [
         "type": "function"
     },
     {
-        "inputs": [{"internalType": "contract ERC20", "name": "quoteToken_", "type": "address"},
+        "inputs": [
+            {"internalType": "contract ERC20", "name": "quoteToken_", "type": "address"},
             {
                 "internalType": "uint48",
                 "name": "timeUntilEligible_",
@@ -196,7 +197,8 @@ export const manualStrikeOLMAbi = [
                 "internalType": "bytes",
                 "name": "other_",
                 "type": "bytes"
-            }], "name": "initialize", "outputs": [], "stateMutability": "nonpayable", "type": "function"
+            }
+        ], "name": "initialize", "outputs": [], "stateMutability": "nonpayable", "type": "function"
     },
     {
         "inputs": [],

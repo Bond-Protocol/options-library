@@ -1,6 +1,36 @@
-import {formatUnits, getContract, PublicClient} from "viem";
-import {fixedStrikeOptionTokenAbi, olmAbi} from "./abis";
+import {encodeFunctionData, formatUnits, getContract, PublicClient, toHex} from "viem";
+import {fixedStrikeOptionTokenAbi, manualStrikeOLMAbi, olmAbi} from "./abis";
 import {IERC20Abi} from "./abis/IERC20";
+
+export function getMOLMInitializeBytecode(
+    quoteTokenAddress: `0x${string}`,
+    timeUntilEligible: number,
+    eligibleDuration: number,
+    receiver: `0x${string}`,
+    epochDuration: number,
+    epochTransitionReward: string,
+    rewardRate: string,
+    allowlistAddress: `0x${string}`,
+    allowlistParams: string = "",
+    other: string = ""
+) {
+    return encodeFunctionData({
+        abi: manualStrikeOLMAbi,
+        functionName: 'initialize',
+        args: [
+            quoteTokenAddress,
+            timeUntilEligible,
+            eligibleDuration,
+            receiver,
+            epochDuration,
+            BigInt(epochTransitionReward),
+            BigInt(rewardRate),
+            allowlistAddress,
+            toHex(allowlistParams, {size: 32}),
+            toHex(other, {size: 32}),
+        ],
+    });
+}
 
 export type OLMPricing = {
     strikePriceUSD: number,
