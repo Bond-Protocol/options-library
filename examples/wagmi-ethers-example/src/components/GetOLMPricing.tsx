@@ -3,6 +3,7 @@ import {OLMPricing, olmPricing} from "../../../../src/functions";
 import {PublicClient} from "viem";
 
 type GetOLMPricingProps = {
+    address: `0x${string}`,
     publicClient: PublicClient
 }
 
