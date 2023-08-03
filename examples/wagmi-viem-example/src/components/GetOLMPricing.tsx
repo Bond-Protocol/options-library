@@ -12,7 +12,7 @@ export function GetOLMPricing(props: GetOLMPricingProps) {
     const [quotePrice, setQuotePrice] = useState<number>(1)
     const [stakedPrice, setStakedPrice] = useState<number>(7.44)
 
-    const [result, setResult] = useState();
+    const [result, setResult] = useState<OLMPricing>();
 
     const getOlmPricing = async () => olmPricing(
         props.address,
