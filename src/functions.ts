@@ -1,7 +1,7 @@
 import {encodeFunctionData, formatUnits, getContract, PublicClient, toHex} from "viem";
 import {fixedStrikeOptionTokenAbi, manualStrikeOLMAbi, olmAbi} from "./abis";
 import {IERC20Abi} from "./abis/IERC20";
-import {WalletClient} from "wagmi";
+import {WalletClient} from "viem";
 
 export function getMOLMInitializeBytecode(
     quoteTokenAddress: `0x${string}`,
@@ -36,6 +36,8 @@ export function getMOLMInitializeBytecode(
 export type OLMPricing = {
     strikePriceUSD: number,
     impliedValue: number,
+    stakedTokenBalance: string,
+    rewardRate: string,
     epochRoi: number,
     epochDuration: number,
     epochsPerYear: number,

@@ -8,7 +8,6 @@ type GetOLMPricingProps = {
 }
 
 export function GetOLMPricing(props: GetOLMPricingProps) {
-    const [address, setAddress] = useState<`0x${string}`>("0xb9fa19fc77fab92d90b0a010fbe7b22b045e5dd9")
     const [payoutPrice, setPayoutPrice] = useState<number>(10.58)
     const [quotePrice, setQuotePrice] = useState<number>(1)
     const [stakedPrice, setStakedPrice] = useState<number>(7.44)
@@ -27,12 +26,6 @@ export function GetOLMPricing(props: GetOLMPricingProps) {
         <div>
 
             <div className="flex flex-col m-2">
-                {/* <label>OLM Address</label>
-                <input
-                    onChange={(e) => setAddress(e.target.value)}
-                    style={{marginLeft: 4}}
-                    value={address}
-                /> */}
                 <label>Payout Price</label>
                 <input
                     onChange={(e) => setPayoutPrice(Number(e.target.value))}

@@ -3,19 +3,19 @@ import {OLMPricing, olmPricing} from "../../../../src/functions";
 import {PublicClient} from "viem";
 
 type GetOLMPricingProps = {
+    address: `0x${string}`,
     publicClient: PublicClient
 }
 
 export function GetOLMPricing(props: GetOLMPricingProps) {
-    const [address, setAddress] = useState<`0x${string}`>("0xb9fa19fc77fab92d90b0a010fbe7b22b045e5dd9")
     const [payoutPrice, setPayoutPrice] = useState<number>(10.58)
     const [quotePrice, setQuotePrice] = useState<number>(1)
     const [stakedPrice, setStakedPrice] = useState<number>(7.44)
 
-    const [result, setResult] = useState<OLMPricing>();
+    const [result, setResult] = useState();
 
     const getOlmPricing = async () => olmPricing(
-        address,
+        props.address,
         payoutPrice,
         quotePrice,
         stakedPrice,
@@ -24,13 +24,8 @@ export function GetOLMPricing(props: GetOLMPricingProps) {
 
     return (
         <div>
-            <div>
-                <label>OLM Address</label>
-                <input
-                    onChange={(e) => setAddress(e.target.value)}
-                    style={{marginLeft: 4}}
-                    value={address}
-                />
+
+            <div className="flex flex-col m-2">
                 <label>Payout Price</label>
                 <input
                     onChange={(e) => setPayoutPrice(Number(e.target.value))}
@@ -56,14 +51,18 @@ export function GetOLMPricing(props: GetOLMPricingProps) {
             </div>
             <br />
             {result &&
-                <div>
+                <div className="m-2">
                     Strike Price: ${result.strikePriceUSD}
                     <br/>
                     Option Token Implied Value: ${result.impliedValue}
                     <br/>
-                    Epoch ROI: {result.epochRoi}%
+                    Staked Token Balance: {result.stakedTokenBalance}
                     <br/>
-                    Epoch Duration: {result.epochDuration}
+                    Reward Rate (oTokens per day): {result.rewardRate}
+                    <br/>
+                    Epoch Duration (days): {result.epochDuration / 86400}
+                    <br/>
+                    Epoch ROI: {result.epochRoi}%
                     <br/>
                     Epochs per Year: {result.epochsPerYear}
                     <br/>
