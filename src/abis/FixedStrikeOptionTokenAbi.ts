@@ -259,6 +259,11 @@ export const fixedStrikeOptionTokenAbi = [
         "name": "getOptionParameters",
         "outputs": [
             {
+                "internalType": "uint8",
+                "name": "decimals_",
+                "type": "uint8"
+            },
+            {
                 "internalType": "contract ERC20",
                 "name": "payout_",
                 "type": "address"

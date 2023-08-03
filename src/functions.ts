@@ -1,6 +1,7 @@
 import {encodeFunctionData, formatUnits, getContract, PublicClient, toHex} from "viem";
 import {fixedStrikeOptionTokenAbi, manualStrikeOLMAbi, olmAbi} from "./abis";
 import {IERC20Abi} from "./abis/IERC20";
+import {WalletClient} from "wagmi";
 
 export function getMOLMInitializeBytecode(
     quoteTokenAddress: `0x${string}`,
@@ -163,7 +164,8 @@ export async function olmTokenList(
 
 export async function oTokenData(
     oTokenAddress: `0x${string}`,
-    publicClient: PublicClient
+    publicClient: PublicClient,
+    walletClient: WalletClient
 ) {
     const oTokenContract = getContract({
         address: oTokenAddress,
@@ -199,7 +201,8 @@ export async function oTokenData(
     const quoteTokenContract = getContract({
         address: quoteToken,
         abi: IERC20Abi,
-        publicClient
+        publicClient,
+        walletClient
     });
 
     const [
@@ -231,11 +234,12 @@ export async function oTokenData(
         payoutTokenDecimals,
         quoteTokenName,
         quoteTokenSymbol,
-        quoteTokenDecimals,
-        strikePrice: decimalAdjustedStrike,
+        strikePrice,
+        decimalAdjustedStrike,
         eligibleTime,
         expiryTime,
-        call
+        call,
+        quoteToken
     };
 
 }
