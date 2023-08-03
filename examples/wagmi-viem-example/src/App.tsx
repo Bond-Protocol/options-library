@@ -15,8 +15,8 @@ export function App() {
     const [address, setAddress] = useState<`0x${string}`>("0xb9fa19fc77fab92d90b0a010fbe7b22b045e5dd9");
 
     return (
-        <>
-            <h1>wagmi + RainbowKit + Vite</h1>
+        <div className="prose m-2">
+            <h1>oToken Examples</h1>
 
             <ConnectButton/>
 
@@ -49,6 +49,6 @@ export function App() {
                     <GetInitializeBytecode />
                 </>
             )}
-        </>
+        </div>
     )
 }

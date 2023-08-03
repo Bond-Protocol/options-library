@@ -16,7 +16,7 @@ export function GetInitializeBytecode() {
 
     return (
         <div>
-            <div>
+            <div className="flex flex-col p-2">
                 <label>Quote Token Address</label>
                 <input
                     onChange={(e) => setQuoteTokenAddress(e.target.value)}
