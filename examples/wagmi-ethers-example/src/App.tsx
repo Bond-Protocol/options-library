@@ -1,9 +1,9 @@
 import {ConnectButton} from '@rainbow-me/rainbowkit'
-import {useAccount, useNetwork, useProvider, useSigner} from 'wagmi'
+import {useAccount, useNetwork, useProvider, useSigner, WalletClient} from 'wagmi'
 import {GetOLMPricing} from './components/GetOLMPricing'
 import {createPublicClient, createWalletClient, http} from "viem";
 import {GetInitializeBytecode} from "./components/GetInitializeBytecode";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {ExerciseWidget} from "./components/ExerciseWidget";
 
 export function App() {
@@ -12,19 +12,25 @@ export function App() {
     const {chain} = useNetwork();
     const provider = useProvider();
     const [olmAddress, setOlmAddress] = useState<`0x${string}`>("0xb9fa19fc77fab92d90b0a010fbe7b22b045e5dd9");
-
+    const [walletClient, setWalletClient] = useState<WalletClient>();
     const publicClient = createPublicClient({
             transport: http(provider.connection.url),
             chain
         }
     );
 
-    const walletClient = createWalletClient({
-            transport: http(signer?.provider.connection.url),
-            chain,
-            account: address
+    useEffect(() => {
+        if (signer && address) {
+            setWalletClient(
+                createWalletClient({
+                        transport: http(signer?.provider.connection.url),
+                        chain,
+                        account: address
+                    }
+                )
+            );
         }
-    );
+    }, [signer, address]);
 
     return (
         <>
