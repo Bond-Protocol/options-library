@@ -1,7 +1,7 @@
 import {ConnectButton} from '@rainbow-me/rainbowkit'
-import {useAccount, useNetwork, useProvider, useSigner, WalletClient} from 'wagmi'
+import {useAccount, useNetwork, useProvider, useSigner} from 'wagmi'
 import {GetOLMPricing} from './components/GetOLMPricing'
-import {createPublicClient, createWalletClient, http} from "viem";
+import {createPublicClient, createWalletClient, http, WalletClient} from "viem";
 import {GetInitializeBytecode} from "./components/GetInitializeBytecode";
 import {useEffect, useState} from "react";
 import {ExerciseWidget} from "./components/ExerciseWidget";
@@ -33,8 +33,8 @@ export function App() {
     }, [signer, address]);
 
     return (
-        <>
-            <h1>wagmi (legacy ethers version) + RainbowKit + Vite</h1>
+        <div className="prose m-2">
+            <h1>oToken Examples</h1>
 
             <ConnectButton/>
 
@@ -68,6 +68,6 @@ export function App() {
                     <GetInitializeBytecode/>
                 </>
             )}
-        </>
+        </div>
     )
 }

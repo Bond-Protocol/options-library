@@ -1,4 +1,5 @@
 import '@rainbow-me/rainbowkit/styles.css'
+import './index.css'
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom/client'
