@@ -2,6 +2,20 @@ import {encodeFunctionData, formatUnits, getContract, PublicClient, toHex} from 
 import {fixedStrikeOptionTokenAbi, manualStrikeOLMAbi, olmAbi} from "./abis";
 import {IERC20Abi} from "./abis/IERC20";
 import {WalletClient} from "viem";
+import {ABIS, ADDRESSES} from "./address-manager";
+import {getBalance} from "viem/public";
+
+export function getAddressesForChain(chainId: number) {
+    const addresses = ADDRESSES[chainId];
+    if (!addresses) throw new Error("Unsupported Chain");
+    return addresses;
+}
+
+export function getAbisForChain(chainId: number) {
+    const abis = ABIS[chainId];
+    if (!abis) throw new Error("Unsupported Chain");
+    return abis;
+}
 
 export function getMOLMInitializeBytecode(
     quoteTokenAddress: `0x${string}`,
@@ -152,7 +166,6 @@ export async function olmTokenList(
     });
 
     const epoch = await olmContract.read.epoch();
-    console.log(epoch);
 
     // Iterate from epoch 1 to current epoch and collect list of oTokens
     let oTokens = [];
@@ -188,11 +201,17 @@ export async function oTokenData(
 
     const [
         name,
-        symbol
+        symbol,
+        balance
     ] = await Promise.all([
         oTokenContract.read.name(),
-        oTokenContract.read.symbol()
+        oTokenContract.read.symbol(),
+        oTokenContract.read.balanceOf([
+            walletClient.account?.address
+        ])
     ]);
+
+    const decimalAdjustedBalance = formatUnits(balance, decimals);
 
     const payoutTokenContract = getContract({
         address: payoutToken,
@@ -241,7 +260,9 @@ export async function oTokenData(
         eligibleTime,
         expiryTime,
         call,
-        quoteToken
+        quoteToken,
+        balance,
+        decimalAdjustedBalance
     };
 
 }

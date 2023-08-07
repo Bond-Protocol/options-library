@@ -1,24 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {PublicClient} from 'viem';
-import {olmTokenList, oTokenData} from '../../../../src/functions';
-import {erc20ABI, useContractWrite, usePrepareContractWrite, useWaitForTransaction, WalletClient} from "wagmi";
-import {ADDRESSES} from "../../../../src/address-manager";
-import {fixedStrikeOptionTellerAbi} from "../../../../src/abis";
-
-const OptionTokenModal: React.FC = () => {
-    return (
-        <dialog id="my_modal_1" className="modal">
-            <form method="dialog" className="modal-box">
-                <h3 className="font-bold text-lg">Hello!</h3>
-                <p className="py-4">Press ESC key or click the button below to close</p>
-                <div className="modal-action">
-                    {/* if there is a button in form, it will close the modal */}
-                    <button className="btn">Close</button>
-                </div>
-            </form>
-        </dialog>
-    );
-}
+import {PublicClient, WalletClient} from 'viem';
+import {
+    getAbisForChain,
+    getAddressesForChain,
+    olmTokenList,
+    oTokenData
+} from '../../../../src/functions';
+import {useContractWrite, usePrepareContractWrite, useWaitForTransaction} from "wagmi";
 
 type ExerciseWidgetProps = {
     publicClient: PublicClient,
@@ -27,7 +15,7 @@ type ExerciseWidgetProps = {
 }
 
 export const ExerciseWidget = (props: ExerciseWidgetProps) => {
-    const [oTokens, setoTokens] = useState<string[]>([]);
+    const [oTokens, setOTokens] = useState<OLMTokenBalance[]>([]);
 
     const [selected, setSelected] = useState<boolean>(false);
     const [oTokenAddress, setOTokenAddress] = useState<string>("Select oToken");
@@ -36,23 +24,28 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
     const [quoteTokenSymbol, setQuoteTokenSymbol] = useState<string>("---");
     const [payoutTokenSymbol, setPayoutTokenSymbol] = useState<string>("---");
 
-    const [amountToExercise, setAmountToExercise] = useState<number>(0);
-    const [decimalAdjustedStrikePrice, setDecimalAdjustedStrikePrice] = useState<number>(0);
+    const [amountToExercise, setAmountToExercise] = useState<string>("0");
+    const [decimalAdjustedStrikePrice, setDecimalAdjustedStrikePrice] = useState<string>("0");
     const [quoteToken, setQuoteToken] = useState<`0x${string}`>();
     const [approvalAmount, setApprovalAmount] = useState<bigint>();
 
-    const exerciseAmount = !isNaN(amountToExercise)
-        ? BigInt(amountToExercise * Math.pow(10, oTokenDecimals))
+    const exerciseAmount = !isNaN(Number(amountToExercise))
+        ? BigInt(Number(amountToExercise) * Math.pow(10, oTokenDecimals))
         : BigInt(0);
+
+    const hasWalletClient: boolean = (props.walletClient && props.walletClient.chain) != null;
 
     const {config: approveConfig} = usePrepareContractWrite({
         address: quoteToken,
-        abi: erc20ABI,
+        // @ts-ignore
+        abi: hasWalletClient && getAbisForChain(props.walletClient.chain?.id).ERC20Abi,
         functionName: 'approve',
         args: [
-            ADDRESSES[5].FixedStrikeOptionTeller,
+            // @ts-ignore
+            hasWalletClient && getAddressesForChain(props.walletClient.chain?.id).FixedStrikeOptionTeller,
             approvalAmount?.toString()
-        ]
+        ],
+        enabled: hasWalletClient
     });
 
     const {
@@ -68,8 +61,10 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
     });
 
     const {config: exerciseConfig} = usePrepareContractWrite({
-        address: ADDRESSES[5].FixedStrikeOptionTeller,
-        abi: fixedStrikeOptionTellerAbi,
+        // @ts-ignore
+        address: hasWalletClient && getAddressesForChain(props.walletClient.chain?.id).FixedStrikeOptionTeller,
+        // @ts-ignore
+        abi: hasWalletClient && getAbisForChain(props.walletClient.chain?.id).FixedStrikeOptionTellerAbi,
         functionName: 'exercise',
         args: [
             oTokenAddress,
@@ -95,25 +90,8 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
         exerciseReset();
     }, [waitForExerciseTransaction.isSuccess, waitForExerciseTransaction.isError]);
 
-    const handleSelected = () => {
-        if (selected) {
-            setOTokenSymbol("Select oToken");
-            setQuoteTokenSymbol("---");
-            setPayoutTokenSymbol("---");
-            setAmountToExercise(0);
-            setDecimalAdjustedStrikePrice(0);
-        } else {
-            setOTokenSymbol("oBPS");
-            setQuoteTokenSymbol("ETH");
-            setPayoutTokenSymbol("BPS");
-            setAmountToExercise(0);
-            setDecimalAdjustedStrikePrice(0.01);
-        }
-        setSelected(!selected);
-    }
-
-    const getOlmTokenList = () => olmTokenList(props.address, props.publicClient).then(res => setoTokens(res));
-    const setoTokenData = (oToken: `0x{string}`) => oTokenData(oToken, props.publicClient, props.walletClient).then(res => {
+    const getOlmTokenList = () => olmTokenList(props.address, props.publicClient).then(res => setOTokens(res));
+    const setOTokenData = (oToken: `0x{string}`) => oTokenData(oToken, props.publicClient, props.walletClient).then(res => {
         setOTokenSymbol(res.symbol);
         setOTokenDecimals(res.decimals);
         setOTokenAddress(oToken);
@@ -123,6 +101,7 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
         setSelected(true);
         setQuoteToken(res.quoteToken);
         setApprovalAmount(res.strikePrice * BigInt(amountToExercise));
+        setAmountToExercise(res.decimalAdjustedBalance);
     });
 
     return (
@@ -140,6 +119,7 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
                     <button className="flex-none w-32 ml-1 rounded-full btn-primary btn-md"
                             onClick={() => {
                                 getOlmTokenList();
+                                // @ts-ignore
                                 window.my_modal_1.showModal();
                             }}>
                         {oTokenSymbol}
@@ -147,18 +127,26 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
                     <dialog id="my_modal_1" className="modal">
                         <form method="dialog" className="modal-box">
                             <h3 className="font-bold text-lg">oTokens created by OLM</h3>
-                            <div className="modal-action flex flex-col">
-                                {oTokens.map((oToken, idx) =>
-                                    <div key={idx} className="flex flex-row m-2">
-                                        <label className="flex-none w-20">Epoch: {idx}</label>
-                                        <button className="btn-md btn-neutral"
-                                                onClick={() => setoTokenData(oToken)
-                                                }>{oToken}</button>
-                                    </div>
-                                )}
-                                {/* if there is a button in form, it will close the modal */}
-                                {/* <button className="btn">Close</button> */}
-                            </div>
+                            {oTokens.length > 0 &&
+                                <div className="modal-action flex flex-col">
+                                    {oTokens.map((oToken, idx) =>
+                                        <div key={idx} className="flex flex-row m-2">
+                                            <label className="flex-none w-20">Epoch: {idx}</label>
+                                            <button className="btn-md btn-neutral"
+                                                // @ts-ignore
+                                                    onClick={() => setOTokenData(oToken)
+                                                    }>{oToken}</button>
+                                        </div>
+                                    )}
+                                    <button className="btn">Close</button>
+                                </div>
+                            }
+                            {oTokens.length === 0 &&
+                                <div className="modal-action flex flex-col">
+                                    Loading oTokens...
+                                    <button className="btn">Close</button>
+                                </div>
+                            }
                         </form>
                     </dialog>
                 </div>
@@ -174,7 +162,8 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
                     <p className="m-0 px-2 w-32"></p>
                 </div>
                 <div id="quote-input" className="flex flex-row p-2">
-                    <input type="text" disabled={true} value={amountToExercise * decimalAdjustedStrikePrice}
+                    <input type="text" disabled={true}
+                           value={Number(amountToExercise) * Number(decimalAdjustedStrikePrice)}
                            className="grow input text-right"/>
                     <button className="flex-none w-32 ml-1 rounded-full btn-neutral btn-disabled btn-md">
                         {quoteTokenSymbol}

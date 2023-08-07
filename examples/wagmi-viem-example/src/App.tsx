@@ -1,5 +1,5 @@
 import {ConnectButton} from '@rainbow-me/rainbowkit'
-import {useAccount, usePublicClient, useWalletClient} from 'wagmi'
+import {useAccount, useChainId, usePublicClient, useWalletClient} from 'wagmi'
 import {GetOLMPricing} from './components/GetOLMPricing'
 import {goerli} from "wagmi/chains";
 import {GetInitializeBytecode} from "./components/GetInitializeBytecode";
@@ -8,10 +8,8 @@ import {ExerciseWidget} from "./components/ExerciseWidget";
 
 export function App() {
     const {isConnected} = useAccount();
-    const {data: walletClient} = useWalletClient({
-        chainId: goerli.id
-    });
-    const publicClient = usePublicClient(goerli);
+    const {data: walletClient} = useWalletClient();
+    const publicClient = usePublicClient();
     const [address, setAddress] = useState<`0x${string}`>("0xb9fa19fc77fab92d90b0a010fbe7b22b045e5dd9");
 
     return (
