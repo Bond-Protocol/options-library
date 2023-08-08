@@ -44,7 +44,7 @@ export function getOLMInitializeBytecode(
     chainId: number
 ): `0x${string}` {
     return encodeFunctionData({
-        abi: getAbisForChain(chainId).OLMAbi,
+        abi: getAbisForChain(chainId).OLM,
         functionName: 'initialize',
         args: [
             quoteTokenAddress,
@@ -96,7 +96,7 @@ export async function olmPricing(
 
     const olmContract = getContract({
         address: olmAddress,
-        abi: abis.OLMAbi,
+        abi: abis.OLM,
         publicClient
     });
 
@@ -120,19 +120,19 @@ export async function olmPricing(
 
     const quoteTokenContract = getContract({
         address: quoteToken,
-        abi: abis.ERC20Abi,
+        abi: abis.ERC20,
         publicClient
     });
 
     const stakedTokenContract = getContract({
         address: stakedToken,
-        abi: abis.ERC20Abi,
+        abi: abis.ERC20,
         publicClient
     });
 
     const optionTokenContract = getContract({
         address: optionToken,
-        abi: abis.FixedStrikeOptionTokenAbi,
+        abi: abis.FixedStrikeOptionToken,
         publicClient
     });
 
@@ -195,7 +195,7 @@ export async function olmTokenList(
 
     const olmContract = getContract({
         address: olmAddress,
-        abi: abis.OLMAbi,
+        abi: abis.OLM,
         publicClient
     });
 
@@ -243,7 +243,7 @@ export async function oTokenData(
 
     const oTokenContract = getContract({
         address: oTokenAddress,
-        abi: abis.FixedStrikeOptionTokenAbi,
+        abi: abis.FixedStrikeOptionToken,
         publicClient
     });
 
@@ -283,13 +283,13 @@ export async function oTokenData(
 
     const payoutTokenContract = getContract({
         address: payoutTokenAddress,
-        abi: abis.ERC20Abi,
+        abi: abis.ERC20,
         publicClient
     });
 
     const quoteTokenContract = getContract({
         address: quoteTokenAddress,
-        abi: abis.ERC20Abi,
+        abi: abis.ERC20,
         publicClient,
         walletClient
     });

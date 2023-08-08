@@ -7,4 +7,3 @@ export * from "./OracleStrikeOLMAbi";
 export * from "./OLMAbi";
 export * from "./MOLMFactoryAbi";
 export * from "./OOLMFactoryAbi";
-export * from "./RolesAuthorityAbi";

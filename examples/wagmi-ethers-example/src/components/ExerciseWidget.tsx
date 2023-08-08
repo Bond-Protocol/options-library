@@ -39,7 +39,7 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
     const {config: approveConfig} = usePrepareContractWrite({
         address: quoteToken?.address,
         // @ts-ignore
-        abi: hasWalletClient && abis.ERC20Abi,
+        abi: hasWalletClient && abis.ERC20,
         functionName: 'approve',
         args: [
             hasWalletClient && addresses.FixedStrikeOptionTeller,
@@ -65,7 +65,7 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
         // @ts-ignore
         address: hasWalletClient && addresses.FixedStrikeOptionTeller,
         // @ts-ignore
-        abi: hasWalletClient && abis.FixedStrikeOptionTellerAbi,
+        abi: hasWalletClient && abis.FixedStrikeOptionTeller,
         functionName: 'exercise',
         args: [
             optionToken?.address,
