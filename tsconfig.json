@@ -13,7 +13,5 @@
     "module": "es2022",
     "target": "es2020"
   },
-  "exclude": [
-    "examples"
-  ]
+  "exclude": ["examples"]
 }
