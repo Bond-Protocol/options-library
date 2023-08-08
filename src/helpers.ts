@@ -211,21 +211,22 @@ export async function olmTokenList(
     return oTokens;
 }
 
-export type OTokenData = {
+export type Token = {
+    address: `0x${string}`;
     name: string;
     symbol: string;
     decimals: number;
-    payoutTokenName: string;
-    payoutTokenSymbol: string;
-    payoutTokenDecimals: number;
-    quoteTokenName: string;
-    quoteTokenSymbol: string;
+}
+
+export type OTokenData = {
+    optionToken: Token;
+    payoutToken: Token;
+    quoteToken: Token;
     strikePrice: bigint;
     decimalAdjustedStrike: string;
     eligibleTime: number;
     expiryTime: number;
     call: boolean;
-    quoteToken: `0x${string}`;
     balance: bigint;
     decimalAdjustedBalance: string;
 }
@@ -248,8 +249,8 @@ export async function oTokenData(
 
     const [
         decimals,
-        payoutToken,
-        quoteToken,
+        payoutTokenAddress,
+        quoteTokenAddress,
         eligibleTime,
         expiryTime,
         ,
@@ -271,16 +272,23 @@ export async function oTokenData(
             : BigInt(0)
     ]);
 
+    const optionToken: Token =  {
+        address: oTokenAddress,
+        name: name,
+        symbol: symbol,
+        decimals: decimals
+    };
+
     const decimalAdjustedBalance: string = formatUnits(balance, decimals);
 
     const payoutTokenContract = getContract({
-        address: payoutToken,
+        address: payoutTokenAddress,
         abi: abis.ERC20Abi,
         publicClient
     });
 
     const quoteTokenContract = getContract({
-        address: quoteToken,
+        address: quoteTokenAddress,
         abi: abis.ERC20Abi,
         publicClient,
         walletClient
@@ -302,25 +310,33 @@ export async function oTokenData(
         quoteTokenContract.read.decimals()
     ]);
 
+    const payoutToken: Token =  {
+        address: payoutTokenAddress,
+        name: payoutTokenName,
+        symbol: payoutTokenSymbol,
+        decimals: payoutTokenDecimals
+    };
+
+    const quoteToken: Token =  {
+        address: quoteTokenAddress,
+        name: quoteTokenName,
+        symbol: quoteTokenSymbol,
+        decimals: quoteTokenDecimals
+    };
+
     const decimalAdjustedStrike: string = formatUnits(
         strikePrice, quoteTokenDecimals
     );
 
     return {
-        name,
-        symbol,
-        decimals,
-        payoutTokenName,
-        payoutTokenSymbol,
-        payoutTokenDecimals,
-        quoteTokenName,
-        quoteTokenSymbol,
+        optionToken,
+        payoutToken,
+        quoteToken,
         strikePrice,
         decimalAdjustedStrike,
         eligibleTime,
         expiryTime,
         call,
-        quoteToken,
         balance,
         decimalAdjustedBalance
     };

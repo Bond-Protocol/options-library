@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {PublicClient} from 'viem';
-import {getAbisForChain, getAddressesForChain, olmTokenList, oTokenData} from '../../../../src/helpers';
+import {getAbisForChain, getAddressesForChain, olmTokenList, oTokenData, Token} from '../../../../src/helpers';
 import {
     useChainId,
     useContractWrite,
@@ -23,23 +23,20 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
     const [oTokens, setOTokens] = useState<string[]>([]);
 
     const [selected, setSelected] = useState<boolean>(false);
-    const [oTokenAddress, setOTokenAddress] = useState<string>("Select oToken");
-    const [oTokenDecimals, setOTokenDecimals] = useState<number>(0);
-    const [oTokenSymbol, setOTokenSymbol] = useState<string>("Select oToken");
-    const [quoteTokenSymbol, setQuoteTokenSymbol] = useState<string>("---");
-    const [payoutTokenSymbol, setPayoutTokenSymbol] = useState<string>("---");
+    const [optionToken, setOptionToken] = useState<Token>();
+    const [payoutToken, setPayoutToken] = useState<Token>();
+    const [quoteToken, setQuoteToken] = useState<Token>();
 
     const [amountToExercise, setAmountToExercise] = useState<string>("0");
     const [decimalAdjustedStrikePrice, setDecimalAdjustedStrikePrice] = useState<string>("0");
-    const [quoteToken, setQuoteToken] = useState<`0x${string}`>();
     const [approvalAmount, setApprovalAmount] = useState<bigint>(BigInt(0));
 
-    const exerciseAmount = !isNaN(Number(amountToExercise))
-        ? BigInt(Number(amountToExercise) * Math.pow(10, oTokenDecimals))
+    const exerciseAmount = optionToken && !isNaN(Number(amountToExercise))
+        ? BigInt(Number(amountToExercise) * Math.pow(10, optionToken.decimals))
         : BigInt(0);
 
     const {config: approveConfig} = usePrepareContractWrite({
-        address: quoteToken,
+        address: quoteToken?.address,
         abi: abis.ERC20Abi,
         functionName: 'approve',
         args: [
@@ -66,7 +63,7 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
         functionName: 'exercise',
         args: [
             // @ts-ignore
-            oTokenAddress,
+            optionToken?.address,
             exerciseAmount
         ],
         enabled: waitForApproveTransaction.isSuccess
@@ -93,14 +90,11 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
     const getOlmTokenList = () => olmTokenList(props.address, props.publicClient).then(res => setOTokens(res));
     // @ts-ignore
     const setOTokenData = (oToken: `0x{string}`) => oTokenData(oToken, props.publicClient, props.walletClient).then(res => {
-        setOTokenSymbol(res.symbol);
-        setOTokenDecimals(res.decimals);
-        setOTokenAddress(oToken);
-        setPayoutTokenSymbol(res.payoutTokenSymbol);
-        setQuoteTokenSymbol(res.quoteTokenSymbol);
+        setOptionToken(res.optionToken);
+        setPayoutToken(res.payoutToken);
+        setQuoteToken(res.quoteToken);
         setDecimalAdjustedStrikePrice(res.decimalAdjustedStrike);
         setSelected(true);
-        setQuoteToken(res.quoteToken);
         setApprovalAmount(res.strikePrice * BigInt(amountToExercise));
         setAmountToExercise(res.decimalAdjustedBalance);
     });
@@ -123,7 +117,10 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
                                 // @ts-ignore
                                 window.my_modal_1.showModal();
                             }}>
-                        {oTokenSymbol}
+                        {optionToken
+                            ? optionToken.symbol
+                            : "Select oToken"
+                        }
                     </button>
                     <dialog id="my_modal_1" className="modal">
                         <form method="dialog" className="modal-box">
@@ -158,7 +155,7 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
                 <div id="quote-header" className="flex flex-row">
                     <p className="grow m-0 px-2 font-bold">Pay</p>
                     {selected ? <p className="m-0 px-2 justify-self-end">Strike
-                            Price: {decimalAdjustedStrikePrice.toLocaleString()} {quoteTokenSymbol} per {payoutTokenSymbol}</p>
+                            Price: {decimalAdjustedStrikePrice.toLocaleString()} {quoteToken?.symbol} per {payoutToken?.symbol}</p>
                         : <p className="m-0 px-2 justify-self-end"></p>}
                     <p className="m-0 px-2 w-32"></p>
                 </div>
@@ -166,7 +163,7 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
                     <input type="text" disabled={true} value={Number(amountToExercise) * Number(decimalAdjustedStrikePrice)}
                            className="grow input text-right"/>
                     <button className="flex-none w-32 ml-1 rounded-full btn-neutral btn-disabled btn-md">
-                        {quoteTokenSymbol}
+                        {quoteToken?.symbol}
                     </button>
                 </div>
                 <p className="m-0 p-0 text-center">↓</p>
@@ -178,7 +175,7 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
                 <div id="payout-input" className="flex flex-row p-2">
                     <input type="text" disabled={true} value={amountToExercise} className="grow input text-right"/>
                     <button className="flex-none w-32 ml-1 rounded-full btn-neutral btn-disabled btn-md">
-                        {payoutTokenSymbol}
+                        {payoutToken?.symbol}
                     </button>
                 </div>
             </div>
@@ -199,7 +196,7 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
                                 onClick={() => {
                                     approveWrite && approveWrite();
                                 }
-                                }>Approve {quoteTokenSymbol}</button>
+                                }>Approve {quoteToken?.symbol}</button>
                     }
                 </div>
             }
