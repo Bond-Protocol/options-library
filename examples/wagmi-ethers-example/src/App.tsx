@@ -14,6 +14,12 @@ export function App() {
     const provider = useProvider();
     const [olmAddress, setOlmAddress] = useState<`0x${string}`>("0xb9fa19fc77fab92d90b0a010fbe7b22b045e5dd9");
     const [walletClient, setWalletClient] = useState<WalletClient>();
+
+    /*
+        Manually create a Viem PublicClient for use with options-library.
+        Other values for transport and chain are acceptable, for example a private
+        RPC endpoint.
+     */
     const publicClient = createPublicClient({
             // @ts-ignore
             transport: http(provider.connection.url),
@@ -23,6 +29,9 @@ export function App() {
 
     useEffect(() => {
         if (signer && address) {
+            /*
+                Manually create a Viem WalletClient for use with options-library.
+            */
             setWalletClient(
                 createWalletClient({
                         // @ts-ignore

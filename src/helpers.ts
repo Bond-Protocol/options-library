@@ -2,18 +2,34 @@ import {encodeFunctionData, formatUnits, getContract, PublicClient, toHex} from 
 import {WalletClient} from "viem";
 import {ABIS, ADDRESSES, ChainAbis, ChainAddresses} from "./address-manager";
 
+/*
+    Returns a ChainAddresses object, containing the addresses of contracts
+    deployed on the specified chain.
+*/
 export function getAddressesForChain(chainId: number): ChainAddresses {
     const addresses: ChainAddresses = ADDRESSES[chainId];
     if (!addresses) throw new Error("Unsupported Chain");
     return addresses;
 }
 
+/*
+    Returns a ChainAbis object, containing the abis of contracts
+    on the specified chain.
+
+    NOTE: At the time of writing, ABIs will be identical across all chains,
+    this is included in case future upgrades are deployed on some chains but
+    not others.
+*/
 export function getAbisForChain(chainId: number): ChainAbis {
     const abis: ChainAbis = ABIS[chainId];
     if (!abis) throw new Error("Unsupported Chain");
     return abis;
 }
 
+/*
+    Hex encodes the provided parameters in the correct format for the OLM's initialize
+    function. This is compatible with both MOLM and OOLM contracts.
+*/
 export function getOLMInitializeBytecode(
     quoteTokenAddress: `0x${string}`,
     timeUntilEligible: number,
@@ -45,6 +61,15 @@ export function getOLMInitializeBytecode(
     });
 }
 
+function getAbis(publicClient: PublicClient): ChainAbis {
+    const chainId: number | undefined = publicClient.chain?.id;
+    if (!chainId) throw new Error("No chain detected");
+    const abis: ChainAbis = getAbisForChain(chainId);
+    if (!abis) throw new Error(`Unsupported chain id: ${chainId}`);
+
+    return abis;
+}
+
 export type OLMPricing = {
     strikePriceUSD: number,
     impliedValue: number,
@@ -56,15 +81,10 @@ export type OLMPricing = {
     apr: number
 }
 
-function getAbis(publicClient: PublicClient): ChainAbis {
-    const chainId: number | undefined = publicClient.chain?.id;
-    if (!chainId) throw new Error("No chain detected");
-    const abis: ChainAbis = getAbisForChain(chainId);
-    if (!abis) throw new Error(`Unsupported chain id: ${chainId}`);
-
-    return abis;
-}
-
+/*
+    Calculates OLM pricing information which is commonly required for
+    front end displays.
+*/
 export async function olmPricing(
     olmAddress: `0x${string}`,
     payoutPriceUSD: number,
@@ -164,6 +184,9 @@ export async function olmPricing(
     };
 }
 
+/*
+    Returns a list of addresses for Option Tokens created by an OLM, in order of epoch.
+*/
 export async function olmTokenList(
     olmAddress: `0x${string}`,
     publicClient: PublicClient
@@ -207,6 +230,9 @@ export type OTokenData = {
     decimalAdjustedBalance: string;
 }
 
+/*
+    Gathers Option Token data commonly required by front end displays.
+*/
 export async function oTokenData(
     oTokenAddress: `0x${string}`,
     publicClient: PublicClient,
