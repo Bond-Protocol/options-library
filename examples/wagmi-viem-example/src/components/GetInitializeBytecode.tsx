@@ -1,7 +1,11 @@
 import {useState} from "react";
 import {getMOLMInitializeBytecode} from "../../../../src/functions";
 
-export function GetInitializeBytecode() {
+export type GetInitializeBytecodeProps = {
+    chainId: number
+};
+
+export function GetInitializeBytecode(props: GetInitializeBytecodeProps) {
     const [quoteTokenAddress, setQuoteTokenAddress] = useState<`0x${string}`>();
     const [timeUntilEligible, setTimeUntilEligible] = useState<number>();
     const [eligibleDuration, setEligibleDuration] = useState<number>();
@@ -19,6 +23,7 @@ export function GetInitializeBytecode() {
             <div className="flex flex-col p-2">
                 <label>Quote Token Address</label>
                 <input
+                    // @ts-ignore
                     onChange={(e) => setQuoteTokenAddress(e.target.value)}
                     style={{marginLeft: 4}}
                     value={quoteTokenAddress}
@@ -42,6 +47,7 @@ export function GetInitializeBytecode() {
                 <br />
                 <label>Receiver</label>
                 <input
+                    // @ts-ignore
                     onChange={(e) => setReceiver(e.target.value)}
                     style={{marginLeft: 4}}
                     value={receiver}
@@ -71,6 +77,7 @@ export function GetInitializeBytecode() {
                 <br />
                 <label>Allowlist Address</label>
                 <input
+                    // @ts-ignore
                     onChange={(e) => setAllowlistAddress(e.target.value)}
                     style={{marginLeft: 4}}
                     value={allowlistAddress}
@@ -93,6 +100,7 @@ export function GetInitializeBytecode() {
                 <button onClick={() => {
                     setBytecode(
                         getMOLMInitializeBytecode(
+                            // @ts-ignore
                             quoteTokenAddress,
                             timeUntilEligible,
                             eligibleDuration,
@@ -102,7 +110,8 @@ export function GetInitializeBytecode() {
                             rewardRate,
                             allowlistAddress,
                             allowlistParams,
-                            other
+                            other,
+                            props.chainId
                         )
                     );
                 }}>Get Bytecode</button>

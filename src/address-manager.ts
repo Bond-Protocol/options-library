@@ -2,7 +2,7 @@ import {
 	allowlistAbi,
 	fixedStrikeOptionTellerAbi,
 	fixedStrikeOptionTokenAbi, manualStrikeOLMAbi,
-	molmFactoryAbi,
+	molmFactoryAbi, olmAbi,
 	oolmFactoryAbi, optionTokenAbi, oracleStrikeOLMAbi,
 	rolesAuthorityAbi
 } from "./abis";
@@ -16,16 +16,17 @@ export type ChainAddresses = {
 }
 
 export type ChainAbis = {
-	ERC20Abi: any,
-	RolesAuthorityAbi: any,
-	FixedStrikeOptionTellerAbi: any,
-	MOLMFactoryAbi: any,
-	OOLMFactoryAbi: any,
-	AllowlistAbi: any,
-	FixedStrikeOptionTokenAbi: any,
-	MOLMAbi: any,
-	OOLMAbi: any,
-	OptionTokenAbi: any,
+	ERC20Abi: typeof erc20ABI,
+	RolesAuthorityAbi: typeof rolesAuthorityAbi,
+	FixedStrikeOptionTellerAbi: typeof fixedStrikeOptionTellerAbi,
+	MOLMFactoryAbi: typeof molmFactoryAbi,
+	OOLMFactoryAbi: typeof oolmFactoryAbi,
+	AllowlistAbi: typeof allowlistAbi,
+	FixedStrikeOptionTokenAbi: typeof fixedStrikeOptionTokenAbi,
+	OLMAbi: typeof olmAbi,
+	MOLMAbi: typeof manualStrikeOLMAbi,
+	OOLMAbi: typeof oracleStrikeOLMAbi,
+	OptionTokenAbi: typeof optionTokenAbi,
 }
 
 export const ADDRESSES: {[index: string]: ChainAddresses} = {
@@ -76,6 +77,7 @@ export const ABIS: {[index: string]: ChainAbis} = {
 		OOLMFactoryAbi: oolmFactoryAbi,
 		AllowlistAbi: allowlistAbi,
 		FixedStrikeOptionTokenAbi: fixedStrikeOptionTokenAbi,
+		OLMAbi: olmAbi,
 		MOLMAbi: manualStrikeOLMAbi,
 		OOLMAbi: oracleStrikeOLMAbi,
 		OptionTokenAbi: optionTokenAbi,
@@ -89,6 +91,7 @@ export const ABIS: {[index: string]: ChainAbis} = {
 		OOLMFactoryAbi: oolmFactoryAbi,
 		AllowlistAbi: allowlistAbi,
 		FixedStrikeOptionTokenAbi: fixedStrikeOptionTokenAbi,
+		OLMAbi: olmAbi,
 		MOLMAbi: manualStrikeOLMAbi,
 		OOLMAbi: oracleStrikeOLMAbi,
 		OptionTokenAbi: optionTokenAbi,
@@ -102,6 +105,7 @@ export const ABIS: {[index: string]: ChainAbis} = {
 		OOLMFactoryAbi: oolmFactoryAbi,
 		AllowlistAbi: allowlistAbi,
 		FixedStrikeOptionTokenAbi: fixedStrikeOptionTokenAbi,
+		OLMAbi: olmAbi,
 		MOLMAbi: manualStrikeOLMAbi,
 		OOLMAbi: oracleStrikeOLMAbi,
 		OptionTokenAbi: optionTokenAbi,
@@ -115,6 +119,7 @@ export const ABIS: {[index: string]: ChainAbis} = {
 		OOLMFactoryAbi: oolmFactoryAbi,
 		AllowlistAbi: allowlistAbi,
 		FixedStrikeOptionTokenAbi: fixedStrikeOptionTokenAbi,
+		OLMAbi: olmAbi,
 		MOLMAbi: manualStrikeOLMAbi,
 		OOLMAbi: oracleStrikeOLMAbi,
 		OptionTokenAbi: optionTokenAbi,
@@ -128,6 +133,7 @@ export const ABIS: {[index: string]: ChainAbis} = {
 		OOLMFactoryAbi: oolmFactoryAbi,
 		AllowlistAbi: allowlistAbi,
 		FixedStrikeOptionTokenAbi: fixedStrikeOptionTokenAbi,
+		OLMAbi: olmAbi,
 		MOLMAbi: manualStrikeOLMAbi,
 		OOLMAbi: oracleStrikeOLMAbi,
 		OptionTokenAbi: optionTokenAbi,

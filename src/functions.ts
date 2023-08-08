@@ -1,9 +1,6 @@
 import {encodeFunctionData, formatUnits, getContract, PublicClient, toHex} from "viem";
-import {fixedStrikeOptionTokenAbi, manualStrikeOLMAbi, olmAbi} from "./abis";
-import {IERC20Abi} from "./abis/IERC20";
 import {WalletClient} from "viem";
 import {ABIS, ADDRESSES} from "./address-manager";
-import {getBalance} from "viem/public";
 
 export function getAddressesForChain(chainId: number) {
     const addresses = ADDRESSES[chainId];
@@ -27,10 +24,11 @@ export function getMOLMInitializeBytecode(
     rewardRate: string,
     allowlistAddress: `0x${string}`,
     allowlistParams: string = "",
-    other: string = ""
+    other: string = "",
+    chainId: number
 ) {
     return encodeFunctionData({
-        abi: manualStrikeOLMAbi,
+        abi: getAbisForChain(chainId).MOLMAbi,
         functionName: 'initialize',
         args: [
             quoteTokenAddress,
@@ -58,6 +56,15 @@ export type OLMPricing = {
     apr: number
 }
 
+function getAbis(publicClient: PublicClient) {
+    const chainId = publicClient.chain?.id;
+    if (!chainId) throw new Error("No chain detected");
+    const abis = getAbisForChain(chainId);
+    if (!abis) throw new Error(`Unsupported chain id: ${chainId}`);
+
+    return abis;
+}
+
 export async function olmPricing(
     olmAddress: `0x${string}`,
     payoutPriceUSD: number,
@@ -65,14 +72,16 @@ export async function olmPricing(
     stakedTokenPriceUSD: number,
     publicClient: PublicClient
 ): Promise<OLMPricing> {
+    const abis = getAbis(publicClient);
+
     const olmContract = getContract({
         address: olmAddress,
-        abi: olmAbi,
+        abi: abis.OLMAbi,
         publicClient
     });
 
     const [
-        quote,
+        quoteToken,
         stakedToken,
         epochDuration,
         epoch,
@@ -90,20 +99,20 @@ export async function olmPricing(
     const optionToken = await olmContract.read.epochOptionTokens([epoch]);
 
     const quoteTokenContract = getContract({
-        address: quote,
-        abi: IERC20Abi,
+        address: quoteToken,
+        abi: abis.ERC20Abi,
         publicClient
     });
 
     const stakedTokenContract = getContract({
         address: stakedToken,
-        abi: IERC20Abi,
+        abi: abis.ERC20Abi,
         publicClient
     });
 
     const optionTokenContract = getContract({
         address: optionToken,
-        abi: fixedStrikeOptionTokenAbi,
+        abi: abis.FixedStrikeOptionTokenAbi,
         publicClient
     });
 
@@ -140,7 +149,7 @@ export async function olmPricing(
     const epochRewardValue = Number(rewardRatePerToken) * impliedValue;
     const epochDurationInDays = epochDuration / 60 / 60 / 24;
     const epochRoi = (epochRewardValue / stakedTokenPriceUSD) * epochDurationInDays * 100;
-    const epochsPerYear  = 365 / epochDurationInDays;
+    const epochsPerYear = 365 / epochDurationInDays;
     const apr = epochRoi * epochsPerYear;
 
     return {
@@ -159,9 +168,11 @@ export async function olmTokenList(
     olmAddress: `0x${string}`,
     publicClient: PublicClient
 ) {
+    const abis = getAbis(publicClient);
+
     const olmContract = getContract({
         address: olmAddress,
-        abi: olmAbi,
+        abi: abis.OLMAbi,
         publicClient
     });
 
@@ -182,9 +193,11 @@ export async function oTokenData(
     publicClient: PublicClient,
     walletClient: WalletClient
 ) {
+    const abis = getAbis(publicClient);
+
     const oTokenContract = getContract({
         address: oTokenAddress,
-        abi: fixedStrikeOptionTokenAbi,
+        abi: abis.FixedStrikeOptionTokenAbi,
         publicClient
     });
 
@@ -206,22 +219,24 @@ export async function oTokenData(
     ] = await Promise.all([
         oTokenContract.read.name(),
         oTokenContract.read.symbol(),
-        oTokenContract.read.balanceOf([
-            walletClient.account?.address
-        ])
+        walletClient && walletClient.account
+            ? oTokenContract.read.balanceOf([
+                walletClient.account?.address
+            ])
+            : BigInt(0)
     ]);
 
     const decimalAdjustedBalance = formatUnits(balance, decimals);
 
     const payoutTokenContract = getContract({
         address: payoutToken,
-        abi: IERC20Abi,
+        abi: abis.ERC20Abi,
         publicClient
     });
 
     const quoteTokenContract = getContract({
         address: quoteToken,
-        abi: IERC20Abi,
+        abi: abis.ERC20Abi,
         publicClient,
         walletClient
     });
@@ -264,5 +279,4 @@ export async function oTokenData(
         balance,
         decimalAdjustedBalance
     };
-
 }

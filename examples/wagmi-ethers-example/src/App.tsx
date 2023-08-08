@@ -1,5 +1,5 @@
 import {ConnectButton} from '@rainbow-me/rainbowkit'
-import {useAccount, useNetwork, useProvider, useSigner} from 'wagmi'
+import {useAccount, useChainId, useNetwork, useProvider, useSigner} from 'wagmi'
 import {GetOLMPricing} from './components/GetOLMPricing'
 import {createPublicClient, createWalletClient, http, WalletClient} from "viem";
 import {GetInitializeBytecode} from "./components/GetInitializeBytecode";
@@ -7,6 +7,7 @@ import {useEffect, useState} from "react";
 import {ExerciseWidget} from "./components/ExerciseWidget";
 
 export function App() {
+    const chainId = useChainId();
     const {isConnected, address} = useAccount();
     const {data: signer} = useSigner();
     const {chain} = useNetwork();
@@ -14,6 +15,7 @@ export function App() {
     const [olmAddress, setOlmAddress] = useState<`0x${string}`>("0xb9fa19fc77fab92d90b0a010fbe7b22b045e5dd9");
     const [walletClient, setWalletClient] = useState<WalletClient>();
     const publicClient = createPublicClient({
+            // @ts-ignore
             transport: http(provider.connection.url),
             chain
         }
@@ -23,6 +25,7 @@ export function App() {
         if (signer && address) {
             setWalletClient(
                 createWalletClient({
+                        // @ts-ignore
                         transport: http(signer?.provider.connection.url),
                         chain,
                         account: address
@@ -44,6 +47,7 @@ export function App() {
                     <div className="flex flex-col m-2">
                         <label>OLM Address</label>
                         <input
+                            // @ts-ignore
                             onChange={(e) => setOlmAddress(e.target.value)}
                             style={{marginLeft: 4}}
                             value={olmAddress}
@@ -59,13 +63,14 @@ export function App() {
                     <hr/>
                     <h2 className="px-2">Exercise Widget</h2>
                     <ExerciseWidget publicClient={publicClient}
+                                    // @ts-ignore
                                     walletClient={walletClient}
                                     address={olmAddress}
                     />
 
                     <hr/>
                     <h2>Get Initialize Bytecode</h2>
-                    <GetInitializeBytecode/>
+                    <GetInitializeBytecode chainId={chainId} />
                 </>
             )}
         </div>

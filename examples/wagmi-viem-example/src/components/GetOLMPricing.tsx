@@ -19,6 +19,7 @@ export function GetOLMPricing(props: GetOLMPricingProps) {
         payoutPrice,
         quotePrice,
         stakedPrice,
+        // @ts-ignore
         props.publicClient
     ).then(res => setResult(res))
 

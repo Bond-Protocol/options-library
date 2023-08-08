@@ -17,6 +17,9 @@ type ExerciseWidgetProps = {
 
 export const ExerciseWidget = (props: ExerciseWidgetProps) => {
     const chainId = useChainId();
+    const addresses = getAddressesForChain(chainId);
+    const abis = getAbisForChain(chainId);
+
     const [oTokens, setOTokens] = useState<string[]>([]);
 
     const [selected, setSelected] = useState<boolean>(false);
@@ -29,7 +32,7 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
     const [amountToExercise, setAmountToExercise] = useState<string>("0");
     const [decimalAdjustedStrikePrice, setDecimalAdjustedStrikePrice] = useState<string>("0");
     const [quoteToken, setQuoteToken] = useState<`0x${string}`>();
-    const [approvalAmount, setApprovalAmount] = useState<bigint>();
+    const [approvalAmount, setApprovalAmount] = useState<bigint>(BigInt(0));
 
     const exerciseAmount = !isNaN(Number(amountToExercise))
         ? BigInt(Number(amountToExercise) * Math.pow(10, oTokenDecimals))
@@ -37,10 +40,10 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
 
     const {config: approveConfig} = usePrepareContractWrite({
         address: quoteToken,
-        abi: getAbisForChain(chainId).ERC20Abi,
+        abi: abis.ERC20Abi,
         functionName: 'approve',
         args: [
-            getAddressesForChain(chainId).FixedStrikeOptionTeller,
+            addresses.FixedStrikeOptionTeller,
             approvalAmount
         ]
     });
@@ -58,10 +61,11 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
     });
 
     const {config: exerciseConfig} = usePrepareContractWrite({
-        address: getAddressesForChain(chainId).FixedStrikeOptionTeller,
-        abi: getAbisForChain(chainId).FixedStrikeOptionTellerAbi,
+        address: addresses.FixedStrikeOptionTeller,
+        abi: abis.FixedStrikeOptionTellerAbi,
         functionName: 'exercise',
         args: [
+            // @ts-ignore
             oTokenAddress,
             exerciseAmount
         ],

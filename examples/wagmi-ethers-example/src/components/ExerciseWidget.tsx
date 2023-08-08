@@ -6,7 +6,7 @@ import {
     olmTokenList,
     oTokenData
 } from '../../../../src/functions';
-import {useContractWrite, usePrepareContractWrite, useWaitForTransaction} from "wagmi";
+import {useChainId, useContractWrite, usePrepareContractWrite, useWaitForTransaction} from "wagmi";
 
 type ExerciseWidgetProps = {
     publicClient: PublicClient,
@@ -15,7 +15,11 @@ type ExerciseWidgetProps = {
 }
 
 export const ExerciseWidget = (props: ExerciseWidgetProps) => {
-    const [oTokens, setOTokens] = useState<OLMTokenBalance[]>([]);
+    const chainId = useChainId();
+    const addresses = getAddressesForChain(chainId);
+    const abis = getAbisForChain(chainId);
+
+    const [oTokens, setOTokens] = useState<string[]>([]);
 
     const [selected, setSelected] = useState<boolean>(false);
     const [oTokenAddress, setOTokenAddress] = useState<string>("Select oToken");
@@ -38,11 +42,10 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
     const {config: approveConfig} = usePrepareContractWrite({
         address: quoteToken,
         // @ts-ignore
-        abi: hasWalletClient && getAbisForChain(props.walletClient.chain?.id).ERC20Abi,
+        abi: hasWalletClient && abis.ERC20Abi,
         functionName: 'approve',
         args: [
-            // @ts-ignore
-            hasWalletClient && getAddressesForChain(props.walletClient.chain?.id).FixedStrikeOptionTeller,
+            hasWalletClient && addresses.FixedStrikeOptionTeller,
             approvalAmount?.toString()
         ],
         enabled: hasWalletClient
@@ -54,6 +57,7 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
         isSuccess: isApproveSuccess,
         write: approveWrite,
         reset: approveReset
+        // @ts-ignore
     } = useContractWrite(approveConfig);
 
     const waitForApproveTransaction = useWaitForTransaction({
@@ -62,9 +66,9 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
 
     const {config: exerciseConfig} = usePrepareContractWrite({
         // @ts-ignore
-        address: hasWalletClient && getAddressesForChain(props.walletClient.chain?.id).FixedStrikeOptionTeller,
+        address: hasWalletClient && addresses.FixedStrikeOptionTeller,
         // @ts-ignore
-        abi: hasWalletClient && getAbisForChain(props.walletClient.chain?.id).FixedStrikeOptionTellerAbi,
+        abi: hasWalletClient && abis.FixedStrikeOptionTellerAbi,
         functionName: 'exercise',
         args: [
             oTokenAddress,
@@ -79,6 +83,7 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
         isSuccess: isExerciseSuccess,
         write: exerciseWrite,
         reset: exerciseReset
+        // @ts-ignore
     } = useContractWrite(exerciseConfig);
 
     const waitForExerciseTransaction = useWaitForTransaction({
