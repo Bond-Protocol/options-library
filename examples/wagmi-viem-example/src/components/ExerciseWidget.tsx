@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {PublicClient} from 'viem';
-import {getAbisForChain, getAddressesForChain, olmTokenList, oTokenData} from '../../../../src/functions';
+import {getAbisForChain, getAddressesForChain, olmTokenList, oTokenData} from '../../../../src/helpers';
 import {
     useChainId,
     useContractWrite,

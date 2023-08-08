@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {getOLMInitializeBytecode} from "../../../../src/functions";
+import {getOLMInitializeBytecode} from "../../../../src/helpers";
 
 export type GetInitializeBytecodeProps = {
     chainId: number

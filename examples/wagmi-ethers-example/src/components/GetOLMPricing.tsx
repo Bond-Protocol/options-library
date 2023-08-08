@@ -1,5 +1,5 @@
 import {useState} from 'react'
-import {OLMPricing, olmPricing} from "../../../../src/functions";
+import {OLMPricing, olmPricing} from "../../../../src/helpers";
 import {PublicClient} from "viem";
 
 type GetOLMPricingProps = {

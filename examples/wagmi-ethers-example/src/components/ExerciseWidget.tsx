@@ -5,7 +5,7 @@ import {
     getAddressesForChain,
     olmTokenList,
     oTokenData
-} from '../../../../src/functions';
+} from '../../../../src/helpers';
 import {useChainId, useContractWrite, usePrepareContractWrite, useWaitForTransaction} from "wagmi";
 
 type ExerciseWidgetProps = {
