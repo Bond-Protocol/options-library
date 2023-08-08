@@ -146,7 +146,7 @@ export async function olmPricing(
     optionTokenDecimals,
     strikePrice,
   ] = await Promise.all([
-      quoteTokenContract.read.decimals(),
+    quoteTokenContract.read.decimals(),
     stakedTokenContract.read.decimals(),
     optionTokenContract.read.decimals(),
     optionTokenContract.read.strike(),
