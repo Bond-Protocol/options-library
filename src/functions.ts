@@ -14,7 +14,7 @@ export function getAbisForChain(chainId: number) {
     return abis;
 }
 
-export function getMOLMInitializeBytecode(
+export function getOLMInitializeBytecode(
     quoteTokenAddress: `0x${string}`,
     timeUntilEligible: number,
     eligibleDuration: number,
@@ -28,7 +28,7 @@ export function getMOLMInitializeBytecode(
     chainId: number
 ) {
     return encodeFunctionData({
-        abi: getAbisForChain(chainId).MOLMAbi,
+        abi: getAbisForChain(chainId).OLMAbi,
         functionName: 'initialize',
         args: [
             quoteTokenAddress,

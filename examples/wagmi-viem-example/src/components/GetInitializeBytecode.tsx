@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {getMOLMInitializeBytecode} from "../../../../src/functions";
+import {getOLMInitializeBytecode} from "../../../../src/functions";
 
 export type GetInitializeBytecodeProps = {
     chainId: number
@@ -99,7 +99,7 @@ export function GetInitializeBytecode(props: GetInitializeBytecodeProps) {
                 <br />
                 <button onClick={() => {
                     setBytecode(
-                        getMOLMInitializeBytecode(
+                        getOLMInitializeBytecode(
                             // @ts-ignore
                             quoteTokenAddress,
                             timeUntilEligible,
