@@ -1,15 +1,15 @@
 import {encodeFunctionData, formatUnits, getContract, PublicClient, toHex} from "viem";
 import {WalletClient} from "viem";
-import {ABIS, ADDRESSES} from "./address-manager";
+import {ABIS, ADDRESSES, ChainAbis, ChainAddresses} from "./address-manager";
 
-export function getAddressesForChain(chainId: number) {
-    const addresses = ADDRESSES[chainId];
+export function getAddressesForChain(chainId: number): ChainAddresses {
+    const addresses: ChainAddresses = ADDRESSES[chainId];
     if (!addresses) throw new Error("Unsupported Chain");
     return addresses;
 }
 
-export function getAbisForChain(chainId: number) {
-    const abis = ABIS[chainId];
+export function getAbisForChain(chainId: number): ChainAbis {
+    const abis: ChainAbis = ABIS[chainId];
     if (!abis) throw new Error("Unsupported Chain");
     return abis;
 }
@@ -26,7 +26,7 @@ export function getOLMInitializeBytecode(
     allowlistParams: string = "",
     other: string = "",
     chainId: number
-) {
+): `0x${string}` {
     return encodeFunctionData({
         abi: getAbisForChain(chainId).OLMAbi,
         functionName: 'initialize',
@@ -56,10 +56,10 @@ export type OLMPricing = {
     apr: number
 }
 
-function getAbis(publicClient: PublicClient) {
-    const chainId = publicClient.chain?.id;
+function getAbis(publicClient: PublicClient): ChainAbis {
+    const chainId: number | undefined = publicClient.chain?.id;
     if (!chainId) throw new Error("No chain detected");
-    const abis = getAbisForChain(chainId);
+    const abis: ChainAbis = getAbisForChain(chainId);
     if (!abis) throw new Error(`Unsupported chain id: ${chainId}`);
 
     return abis;
@@ -72,7 +72,7 @@ export async function olmPricing(
     stakedTokenPriceUSD: number,
     publicClient: PublicClient
 ): Promise<OLMPricing> {
-    const abis = getAbis(publicClient);
+    const abis: ChainAbis = getAbis(publicClient);
 
     const olmContract = getContract({
         address: olmAddress,
@@ -96,7 +96,7 @@ export async function olmPricing(
         olmContract.read.totalBalance()
     ]);
 
-    const optionToken = await olmContract.read.epochOptionTokens([epoch]);
+    const optionToken: `0x${string}` = await olmContract.read.epochOptionTokens([epoch]);
 
     const quoteTokenContract = getContract({
         address: quoteToken,
@@ -128,29 +128,29 @@ export async function olmPricing(
         optionTokenContract.read.strike()
     ]);
 
-    const decimalAdjustedStrike = formatUnits(
+    const decimalAdjustedStrike: string = formatUnits(
         strikePrice, quoteTokenDecimals
     );
 
-    const strikePriceUSD = Number(decimalAdjustedStrike) * quotePriceUSD;
-    const impliedValue = payoutPriceUSD - strikePriceUSD;
+    const strikePriceUSD: number = Number(decimalAdjustedStrike) * quotePriceUSD;
+    const impliedValue: number = payoutPriceUSD - strikePriceUSD;
 
-    const decimalAdjustedRewardRate = formatUnits(
+    const decimalAdjustedRewardRate: string = formatUnits(
         rewardRate, optionTokenDecimals
     );
 
-    const decimalAdjustedTotalBalance = formatUnits(
+    const decimalAdjustedTotalBalance: string = formatUnits(
         stakedTokenBalance, stakedTokenDecimals
     );
 
-    const rewardRatePerToken =
+    const rewardRatePerToken: number =
         Number(decimalAdjustedRewardRate) / Number(decimalAdjustedTotalBalance);
 
-    const epochRewardValue = Number(rewardRatePerToken) * impliedValue;
-    const epochDurationInDays = epochDuration / 60 / 60 / 24;
-    const epochRoi = (epochRewardValue / stakedTokenPriceUSD) * epochDurationInDays * 100;
-    const epochsPerYear = 365 / epochDurationInDays;
-    const apr = epochRoi * epochsPerYear;
+    const epochRewardValue: number = Number(rewardRatePerToken) * impliedValue;
+    const epochDurationInDays: number = epochDuration / 60 / 60 / 24;
+    const epochRoi: number = (epochRewardValue / stakedTokenPriceUSD) * epochDurationInDays * 100;
+    const epochsPerYear: number = 365 / epochDurationInDays;
+    const apr: number = epochRoi * epochsPerYear;
 
     return {
         strikePriceUSD: strikePriceUSD,
@@ -167,8 +167,8 @@ export async function olmPricing(
 export async function olmTokenList(
     olmAddress: `0x${string}`,
     publicClient: PublicClient
-) {
-    const abis = getAbis(publicClient);
+): Promise<string[]> {
+    const abis: ChainAbis = getAbis(publicClient);
 
     const olmContract = getContract({
         address: olmAddress,
@@ -176,24 +176,43 @@ export async function olmTokenList(
         publicClient
     });
 
-    const epoch = await olmContract.read.epoch();
+    const epoch: number = await olmContract.read.epoch();
 
     // Iterate from epoch 1 to current epoch and collect list of oTokens
     let oTokens = [];
     for (let i = 1; i <= epoch; i++) {
-        const optionToken = await olmContract.read.epochOptionTokens([i]);
+        const optionToken: `0x${string}` = await olmContract.read.epochOptionTokens([i]);
         oTokens.push(optionToken);
     }
 
     return oTokens;
 }
 
+export type OTokenData = {
+    name: string;
+    symbol: string;
+    decimals: number;
+    payoutTokenName: string;
+    payoutTokenSymbol: string;
+    payoutTokenDecimals: number;
+    quoteTokenName: string;
+    quoteTokenSymbol: string;
+    strikePrice: bigint;
+    decimalAdjustedStrike: string;
+    eligibleTime: number;
+    expiryTime: number;
+    call: boolean;
+    quoteToken: `0x${string}`;
+    balance: bigint;
+    decimalAdjustedBalance: string;
+}
+
 export async function oTokenData(
     oTokenAddress: `0x${string}`,
     publicClient: PublicClient,
     walletClient: WalletClient
-) {
-    const abis = getAbis(publicClient);
+): Promise<OTokenData> {
+    const abis: ChainAbis = getAbis(publicClient);
 
     const oTokenContract = getContract({
         address: oTokenAddress,
@@ -226,7 +245,7 @@ export async function oTokenData(
             : BigInt(0)
     ]);
 
-    const decimalAdjustedBalance = formatUnits(balance, decimals);
+    const decimalAdjustedBalance: string = formatUnits(balance, decimals);
 
     const payoutTokenContract = getContract({
         address: payoutToken,
@@ -257,7 +276,7 @@ export async function oTokenData(
         quoteTokenContract.read.decimals()
     ]);
 
-    const decimalAdjustedStrike = formatUnits(
+    const decimalAdjustedStrike: string = formatUnits(
         strikePrice, quoteTokenDecimals
     );
 
