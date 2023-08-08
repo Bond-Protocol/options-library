@@ -5,7 +5,6 @@ import {
   getAddressesForChain,
   olmTokenList,
   oTokenData,
-  Token,
 } from '../../../../src/helpers';
 import {
   useChainId,
@@ -14,6 +13,7 @@ import {
   useWaitForTransaction,
   WalletClient,
 } from 'wagmi';
+import {Token} from "../../../../src/types";
 
 type ExerciseWidgetProps = {
   publicClient: PublicClient;
@@ -94,14 +94,15 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
     waitForExerciseTransaction.isError,
   ]);
 
-  // @ts-ignore
   const getOlmTokenList = () =>
-    olmTokenList(props.address, props.publicClient).then((res) =>
+      // @ts-ignore
+      olmTokenList(props.address, props.publicClient).then((res) =>
       setOTokens(res),
     );
-  // @ts-ignore
+
   const setOTokenData = (oToken: `0x{string}`) =>
-    oTokenData(oToken, props.publicClient, props.walletClient).then((res) => {
+      // @ts-ignore
+      oTokenData(oToken, props.publicClient, props.walletClient).then((res) => {
       setOptionToken(res.optionToken);
       setPayoutToken(res.payoutToken);
       setQuoteToken(res.quoteToken);

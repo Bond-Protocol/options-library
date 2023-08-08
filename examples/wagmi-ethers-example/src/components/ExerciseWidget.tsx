@@ -5,7 +5,6 @@ import {
   getAddressesForChain,
   olmTokenList,
   oTokenData,
-  Token,
 } from '../../../../src/helpers';
 import {
   useChainId,
@@ -13,6 +12,7 @@ import {
   usePrepareContractWrite,
   useWaitForTransaction,
 } from 'wagmi';
+import {Token} from "../../../../src/types";
 
 type ExerciseWidgetProps = {
   publicClient: PublicClient;

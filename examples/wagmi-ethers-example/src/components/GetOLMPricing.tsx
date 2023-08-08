@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { OLMPricing, olmPricing } from '../../../../src/helpers';
+import { olmPricing } from '../../../../src/helpers';
 import { PublicClient } from 'viem';
+import {OLMPricing} from "../../../../src/types";
 
 type GetOLMPricingProps = {
   address: `0x${string}`;

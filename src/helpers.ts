@@ -6,7 +6,8 @@ import {
   toHex,
 } from 'viem';
 import { WalletClient } from 'viem';
-import { ABIS, ADDRESSES, ChainAbis, ChainAddresses } from './address-manager';
+import { ABIS, ADDRESSES } from './address-manager';
+import {ChainAbis, ChainAddresses, OLMPricing, OTokenData, Token} from "./types";
 
 /*
     Returns a ChainAddresses object, containing the addresses of contracts
@@ -75,17 +76,6 @@ function getAbis(publicClient: PublicClient): ChainAbis {
 
   return abis;
 }
-
-export type OLMPricing = {
-  strikePriceUSD: number;
-  impliedValue: number;
-  stakedTokenBalance: string;
-  rewardRate: string;
-  epochRoi: number;
-  epochDuration: number;
-  epochsPerYear: number;
-  apr: number;
-};
 
 /*
     Calculates OLM pricing information which is commonly required for
@@ -224,26 +214,6 @@ export async function olmTokenList(
 
   return oTokens;
 }
-
-export type Token = {
-  address: `0x${string}`;
-  name: string;
-  symbol: string;
-  decimals: number;
-};
-
-export type OTokenData = {
-  optionToken: Token;
-  payoutToken: Token;
-  quoteToken: Token;
-  strikePrice: bigint;
-  decimalAdjustedStrike: string;
-  eligibleTime: number;
-  expiryTime: number;
-  call: boolean;
-  balance: bigint;
-  decimalAdjustedBalance: string;
-};
 
 /*
     Gathers Option Token data commonly required by front end displays.
