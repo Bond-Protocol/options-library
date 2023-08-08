@@ -7,7 +7,8 @@
     "clean": "rm -rf ./dist",
     "build": "tsc --build",
     "format": "prettier --write .",
-    "lint": "eslint --ext .ts,.tsx src"
+    "lint": "eslint --ext .ts,.tsx src",
+    "prepare": "husky install"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +23,7 @@
     "eslint": "^8.46.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
+    "husky": "^8.0.3",
     "prettier": "^3.0.1",
     "typescript": "^5.1.6"
   }

@@ -12,7 +12,7 @@ import {
   usePrepareContractWrite,
   useWaitForTransaction,
 } from 'wagmi';
-import {Token} from "../../../../src/types";
+import { Token } from '../../../../src/types';
 
 type ExerciseWidgetProps = {
   publicClient: PublicClient;

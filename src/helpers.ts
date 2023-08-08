@@ -7,7 +7,13 @@ import {
 } from 'viem';
 import { WalletClient } from 'viem';
 import { ABIS, ADDRESSES } from './address-manager';
-import {ChainAbis, ChainAddresses, OLMPricing, OTokenData, Token} from "./types";
+import {
+  ChainAbis,
+  ChainAddresses,
+  OLMPricing,
+  OTokenData,
+  Token,
+} from './types';
 
 /*
     Returns a ChainAddresses object, containing the addresses of contracts
@@ -140,7 +146,7 @@ export async function olmPricing(
     optionTokenDecimals,
     strikePrice,
   ] = await Promise.all([
-    quoteTokenContract.read.decimals(),
+      quoteTokenContract.read.decimals(),
     stakedTokenContract.read.decimals(),
     optionTokenContract.read.decimals(),
     optionTokenContract.read.strike(),

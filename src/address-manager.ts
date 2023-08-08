@@ -1,13 +1,16 @@
-import {ChainAbis, ChainAddresses} from "./types";
+import { ChainAbis, ChainAddresses } from './types';
 import {
   allowlist,
   fixedStrikeOptionTeller,
   fixedStrikeOptionToken,
-  IERC20, manualStrikeOLM,
+  IERC20,
+  manualStrikeOLM,
   MOLMFactory,
   OLM,
-  OOLMFactory, optionToken, oracleStrikeOLM
-} from "./abis";
+  OOLMFactory,
+  optionToken,
+  oracleStrikeOLM,
+} from './abis';
 
 export const ADDRESSES: { [index: string]: ChainAddresses } = {
   // Ethereum Mainnet

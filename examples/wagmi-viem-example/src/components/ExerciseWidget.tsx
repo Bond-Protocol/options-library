@@ -13,7 +13,7 @@ import {
   useWaitForTransaction,
   WalletClient,
 } from 'wagmi';
-import {Token} from "../../../../src/types";
+import { Token } from '../../../../src/types';
 
 type ExerciseWidgetProps = {
   publicClient: PublicClient;
@@ -95,14 +95,14 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
   ]);
 
   const getOlmTokenList = () =>
-      // @ts-ignore
-      olmTokenList(props.address, props.publicClient).then((res) =>
+    // @ts-ignore
+    olmTokenList(props.address, props.publicClient).then((res) =>
       setOTokens(res),
     );
 
   const setOTokenData = (oToken: `0x{string}`) =>
-      // @ts-ignore
-      oTokenData(oToken, props.publicClient, props.walletClient).then((res) => {
+    // @ts-ignore
+    oTokenData(oToken, props.publicClient, props.walletClient).then((res) => {
       setOptionToken(res.optionToken);
       setPayoutToken(res.payoutToken);
       setQuoteToken(res.quoteToken);
