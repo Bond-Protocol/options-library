@@ -5,7 +5,6 @@ import {
   PublicClient,
   toHex,
 } from 'viem';
-import { WalletClient } from 'viem';
 import { ABIS, ADDRESSES } from './address-manager';
 import {
   ChainAbis,
@@ -227,7 +226,7 @@ export async function olmTokenList(
 export async function oTokenData(
   oTokenAddress: `0x${string}`,
   publicClient: PublicClient,
-  walletClient: WalletClient,
+  userAddress?: `0x${string}`
 ): Promise<OTokenData> {
   const abis: ChainAbis = getAbis(publicClient);
 
@@ -251,9 +250,9 @@ export async function oTokenData(
   const [name, symbol, balance] = await Promise.all([
     oTokenContract.read.name(),
     oTokenContract.read.symbol(),
-    walletClient && walletClient.account
-      ? oTokenContract.read.balanceOf([walletClient.account?.address])
-      : BigInt(0),
+    userAddress
+        ? oTokenContract.read.balanceOf([userAddress])
+        : BigInt(0)
   ]);
 
   const optionToken: Token = {
@@ -274,8 +273,7 @@ export async function oTokenData(
   const quoteTokenContract = getContract({
     address: quoteTokenAddress,
     abi: abis.ERC20,
-    publicClient,
-    walletClient,
+    publicClient
   });
 
   const [
