@@ -226,7 +226,7 @@ export async function olmTokenList(
 export async function oTokenData(
   oTokenAddress: `0x${string}`,
   publicClient: PublicClient,
-  userAddress?: `0x${string}`
+  userAddress?: `0x${string}`,
 ): Promise<OTokenData> {
   const abis: ChainAbis = getAbis(publicClient);
 
@@ -250,9 +250,7 @@ export async function oTokenData(
   const [name, symbol, balance] = await Promise.all([
     oTokenContract.read.name(),
     oTokenContract.read.symbol(),
-    userAddress
-        ? oTokenContract.read.balanceOf([userAddress])
-        : BigInt(0)
+    userAddress ? oTokenContract.read.balanceOf([userAddress]) : BigInt(0),
   ]);
 
   const optionToken: Token = {
@@ -273,7 +271,7 @@ export async function oTokenData(
   const quoteTokenContract = getContract({
     address: quoteTokenAddress,
     abi: abis.ERC20,
-    publicClient
+    publicClient,
   });
 
   const [

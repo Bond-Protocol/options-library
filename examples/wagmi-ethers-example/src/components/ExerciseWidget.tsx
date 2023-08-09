@@ -24,14 +24,14 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
   const chainId = useChainId();
   const abis = getAbisForChain(chainId);
   const account = useAccount();
-/*
+  /*
   For demonstration purposes, we are setting the tellerAddress manually below.
   This is because the old test contract had a test OLM set up on it. To get the
   current supported deployment, you can use the getAddressesForChain function:
 
   const tellerAddress = getAddressesForChain(chainId).FixedStrikeOptionTeller;
 */
-  const tellerAddress = "0x5C9448c52760Be7E650380e3c635972E8182C6F4"
+  const tellerAddress = '0x5C9448c52760Be7E650380e3c635972E8182C6F4';
 
   const [oTokens, setOTokens] = useState<string[]>([]);
 

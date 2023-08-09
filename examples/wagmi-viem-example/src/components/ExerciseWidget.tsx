@@ -32,7 +32,7 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
 
   const tellerAddress = getAddressesForChain(chainId).FixedStrikeOptionTeller;
 */
-const tellerAddress = "0x5C9448c52760Be7E650380e3c635972E8182C6F4"
+  const tellerAddress = '0x5C9448c52760Be7E650380e3c635972E8182C6F4';
   const [oTokens, setOTokens] = useState<string[]>([]);
 
   const [selected, setSelected] = useState<boolean>(false);
