@@ -1,5 +1,3 @@
-
-
 To run example UI using legacy Ethers based version of wagmi:
 
 ```
