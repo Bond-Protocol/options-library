@@ -1,5 +1,5 @@
 {
-  "name": "options-library",
+  "name": "@bond-protocol/options-library",
   "version": "0.1.0",
   "description": "",
   "main": "dist/index.js",
