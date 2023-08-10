@@ -14,34 +14,57 @@ import {
   Token,
 } from './types';
 
-/*
-    Returns a ChainAddresses object, containing the addresses of contracts
-    deployed on the specified chain.
-*/
+/**
+ *  Gets the addresses of pre-deployed contracts for the Option system on the specified chain.
+ *
+ *  At launch, these should be identical across all chains, but this is included in case they
+ *  diverge for some reason in the future.
+ *
+ * @param chainId (number) - the chain id to get addresses for.
+ *
+ * @return ChainAddresses object, containing the addresses of contracts deployed on the specified chain.
+ */
 export function getAddressesForChain(chainId: number): ChainAddresses {
   const addresses: ChainAddresses = ADDRESSES[chainId];
   if (!addresses) throw new Error('Unsupported Chain');
   return addresses;
 }
 
-/*
-    Returns a ChainAbis object, containing the abis of contracts
-    on the specified chain.
-
-    NOTE: At the time of writing, ABIs will be identical across all chains,
-    this is included in case future upgrades are deployed on some chains but
-    not others.
-*/
+/**
+ * Gets the ABIs of Option system contracts on the specified chain.
+ *
+ * At launch, these should be identical across all chains, but this is included in case they
+ * diverge for some reason in the future.
+ *
+ * @param chainId (number) - the chain id to get ABIs for.
+ *
+ * @return ChainAbis object containing the ABIs of contracts deployed on the specified chain.
+ */
 export function getAbisForChain(chainId: number): ChainAbis {
   const abis: ChainAbis = ABIS[chainId];
   if (!abis) throw new Error('Unsupported Chain');
   return abis;
 }
 
-/*
-    Hex encodes the provided parameters in the correct format for the OLM's initialize
-    function. This is compatible with both MOLM and OOLM contracts.
-*/
+/**
+ * Hex encodes the provided parameters in the correct format for the OLM's initialize function.
+ * This is compatible with both MOLM and OOLM contracts.
+ *
+ * @param quoteTokenAddress (0x${string}) - Token that stakers must pay to exercise the call options they receive.
+ * @param timeUntilEligible (number) - Amount of time (in seconds) from option token deployment to when it can be exercised.
+ * @param eligibleDuration (number) - Amount of time (in seconds) from when the option token is eligible to when it expires.
+ * @param receiver (0x${string}) - Address that will receive the quote tokens when an option is exercised IMPORTANT: receiver is the only address that can retrieve payout token collateral from expired options. It must be able to call the reclaim function on the Option Teller contract.
+ * @param epochDuration (number) - Staking epoch duration (in seconds).
+ * @param epochTransitionReward (number) - Amount of option tokens that are rewarded for starting a new epoch.
+ * @param rewardRate (string) - Amount of option tokens rewarded per reward period (1 day).
+ * @param allowlistAddress (0x${string}) - Address of the allowlist contract that can be used to restrict who can stake in the OLM contract. If the zero address, then no allow list is used.
+ * @param allowlistParams (string) - Parameters that are passed to the allowlist contract when this contract registers with it.
+ * @param other (string) - Additional parameters that are required by specific implementations of the OLM contract.
+ * @param chainId (number) - The chain id on which the transaction will be executed.
+ *
+ * @return 0x${string} consisting of the hex-encoded bytecode for the OLM initialize function.
+ *         This can be copied and executed manually.
+ */
 export function getOLMInitializeBytecode(
   quoteTokenAddress: `0x${string}`,
   timeUntilEligible: number,
@@ -82,10 +105,17 @@ function getAbis(publicClient: PublicClient): ChainAbis {
   return abis;
 }
 
-/*
-    Calculates OLM pricing information which is commonly required for
-    front end displays.
-*/
+/**
+ * Calculates OLM pricing information which is commonly required for front end displays.
+ *
+ * @param olmAddress (0x${string}) - Address of the OLM contract to get pricing for.
+ * @param payoutPriceUSD (number) - The current price of the Payout Token in USD.
+ * @param quotePriceUSD (number) - The current price of the Quote Token in USD.
+ * @param stakedTokenPriceUSD (number) - The current price of the Staked Token in USD.
+ * @param publicClient (PublicClient) - A Viem PublicClient.
+ *
+ * @return Promise<OLMPricing> containing pricing data for the specified OLM.
+ */
 export async function getOLMPricing(
   olmAddress: `0x${string}`,
   payoutPriceUSD: number,
@@ -191,9 +221,14 @@ export async function getOLMPricing(
   };
 }
 
-/*
-    Returns a list of addresses for Option Tokens created by an OLM, in order of epoch.
-*/
+/**
+ * Returns a list of addresses for Option Tokens created by an OLM, in order of epoch.
+ *
+ * @param olmAddress (0x${string}) - Address of the OLM contract to get a token list for.
+ * @param publicClient (PublicClient) - A Viem PublicClient.
+ *
+ * @return Promise<string[]> containing a list of addresses for Option Tokens created by the specified OLM, in order of epoch.
+ */
 export async function getOLMTokenList(
   olmAddress: `0x${string}`,
   publicClient: PublicClient,
@@ -220,9 +255,15 @@ export async function getOLMTokenList(
   return oTokens;
 }
 
-/*
-    Gathers Option Token data commonly required by front end displays.
-*/
+/**
+ * Gathers Option Token data commonly required by front end displays.
+ *
+ * @param oTokenAddress (0x${string}) - Address of the Option Token to get data for.
+ * @param publicClient (PublicClient) - A Viem PublicClient.
+ * @param userAddress (0x${string}) [OPTIONAL] - The address of a user to check Option Token balances for. If not provided, a balance of 0 will be returned for all Option Tokens.
+ *
+ * @return Promise<OTokenData> containing data commonly required by frontend displays.
+ */
 export async function getOTokenData(
   oTokenAddress: `0x${string}`,
   publicClient: PublicClient,
