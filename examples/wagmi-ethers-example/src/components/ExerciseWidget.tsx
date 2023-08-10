@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { PublicClient } from 'viem';
 import {
   getAbisForChain,
-  getAddressesForChain,
-  olmTokenList,
-  oTokenData,
+  getOLMTokenList,
+  getOTokenData,
 } from '../../../../src/helpers';
 import {
   useAccount,
@@ -50,8 +49,6 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
     optionToken && !isNaN(Number(amountToExercise))
       ? BigInt(Number(amountToExercise) * Math.pow(10, optionToken?.decimals))
       : BigInt(0);
-
-  const hasAccount: boolean = account.address != undefined;
 
   const { config: approveConfig } = usePrepareContractWrite({
     address: quoteToken?.address,
@@ -107,11 +104,11 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
   ]);
 
   const getOlmTokenList = () =>
-    olmTokenList(props.address, props.publicClient).then((res) =>
+    getOLMTokenList(props.address, props.publicClient).then((res) =>
       setOTokens(res),
     );
   const setOTokenData = (oToken: `0x{string}`) =>
-    oTokenData(oToken, props.publicClient, account.address).then((res) => {
+    getOTokenData(oToken, props.publicClient, account.address).then((res) => {
       setOptionToken(res.optionToken);
       setPayoutToken(res.payoutToken);
       setQuoteToken(res.quoteToken);

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { olmPricing } from '../../../../src/helpers';
+import { getOLMPricing } from '../../../../src/helpers';
 import { PublicClient } from 'viem';
 import { OLMPricing } from '../../../../src/types';
 
@@ -16,7 +16,7 @@ export function GetOLMPricing(props: GetOLMPricingProps) {
   const [result, setResult] = useState<OLMPricing>();
 
   const getOlmPricing = async () =>
-    olmPricing(
+    getOLMPricing(
       props.address,
       payoutPrice,
       quotePrice,

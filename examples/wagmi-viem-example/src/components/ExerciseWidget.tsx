@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { PublicClient } from 'viem';
 import {
   getAbisForChain,
-  getAddressesForChain,
-  olmTokenList,
-  oTokenData,
+  getOLMTokenList,
+  getOTokenData,
 } from '../../../../src/helpers';
 import {
   useAccount,
@@ -103,13 +102,13 @@ export const ExerciseWidget = (props: ExerciseWidgetProps) => {
 
   const getOlmTokenList = () =>
     // @ts-ignore
-    olmTokenList(props.address, props.publicClient).then((res) =>
+    getOLMTokenList(props.address, props.publicClient).then((res) =>
       setOTokens(res),
     );
 
   const setOTokenData = (oToken: `0x{string}`) =>
     // @ts-ignore
-    oTokenData(oToken, props.publicClient, account.address).then((res) => {
+    getOTokenData(oToken, props.publicClient, account.address).then((res) => {
       setOptionToken(res.optionToken);
       setPayoutToken(res.payoutToken);
       setQuoteToken(res.quoteToken);

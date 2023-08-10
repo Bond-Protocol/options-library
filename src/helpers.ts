@@ -86,7 +86,7 @@ function getAbis(publicClient: PublicClient): ChainAbis {
     Calculates OLM pricing information which is commonly required for
     front end displays.
 */
-export async function olmPricing(
+export async function getOLMPricing(
   olmAddress: `0x${string}`,
   payoutPriceUSD: number,
   quotePriceUSD: number,
@@ -194,7 +194,7 @@ export async function olmPricing(
 /*
     Returns a list of addresses for Option Tokens created by an OLM, in order of epoch.
 */
-export async function olmTokenList(
+export async function getOLMTokenList(
   olmAddress: `0x${string}`,
   publicClient: PublicClient,
 ): Promise<string[]> {
@@ -223,7 +223,7 @@ export async function olmTokenList(
 /*
     Gathers Option Token data commonly required by front end displays.
 */
-export async function oTokenData(
+export async function getOTokenData(
   oTokenAddress: `0x${string}`,
   publicClient: PublicClient,
   userAddress?: `0x${string}`,
