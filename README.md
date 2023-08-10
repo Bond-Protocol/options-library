@@ -1,3 +1,7 @@
+[Documentation](https://docs.bondprotocol.finance/developers/options-library)
+
+License: MIT
+
 To run example UI using legacy Ethers based version of wagmi:
 
 ```
